@@ -36,8 +36,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> createNewAccount(@RequestBody User user) {
         try {
-            user.setActive(true); // Automatically activate a new user
-            user.setCustomerId(user.getCustomerId());
+            user.setActive(true); // Automatically activate a new user;
             userService.saveUser(user);
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (Exception e) {

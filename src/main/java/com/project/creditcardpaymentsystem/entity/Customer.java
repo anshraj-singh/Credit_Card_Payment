@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "customers")
@@ -17,8 +18,8 @@ public class Customer {
     private String address;
 
     @DBRef
-    private List<CreditCard> creditCards; // Link to CreditCard entities
+    private List<CreditCard> creditCards = new ArrayList<>(); // Link to CreditCard entities
 
     @DBRef
-    private List<Transaction> transactions; // Link to Transaction entities
+    private List<Transaction> transactions = new ArrayList<>(); // Link to Transaction entities
 }

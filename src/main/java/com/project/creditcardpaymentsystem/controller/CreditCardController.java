@@ -35,17 +35,6 @@ public class CreditCardController {
     @PostMapping
     public ResponseEntity<?> createCreditCard(@RequestBody CreditCard creditCard) {
         try {
-            if (creditCard.getCustomer() != null && creditCard.getCustomer().getId() != null) {
-                Customer customer = customerService.getById(creditCard.getCustomer().getId()).orElse(null);
-                if (customer != null) {
-                    creditCard.setCustomer(customer);
-                } else {
-                    return new ResponseEntity<>("Customer not found", HttpStatus.BAD_REQUEST);
-                }
-            } else {
-                return new ResponseEntity<>("Customer ID must be provided", HttpStatus.BAD_REQUEST);
-            }
-
             creditCardService.saveCreditCard(creditCard);
             return new ResponseEntity<>(creditCard, HttpStatus.CREATED);
         } catch (Exception e) {

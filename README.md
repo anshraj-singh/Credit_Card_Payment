@@ -101,3 +101,26 @@ This project is a Spring Boot-based RESTful API for managing customers, credit c
 - `DELETE /transactions/{id}`: Delete a transaction by ID.
 
 ---
+
+The Credit Card Payment System is a Spring Boot-based application designed 
+to manage users, customers, credit cards, and transactions. It integrates 
+MongoDB as the database to store and retrieve information efficiently. The 
+project provides a robust backend for managing credit card payment workflows,
+supporting CRUD operations for users, customers, credit cards, and 
+transactions.
+
+# Features
+
+ * User Management: Create, read, update, and delete user accounts.
+
+ * Customer Management: Link users to customers and manage customer details such as name, email, phone, and address.
+
+ * Credit Card Management: Store and manage credit card details, including card number, holder name, expiration date, and card type.
+
+ * Transaction Management: Track transactions linked to customers and credit cards, including amount, currency, description, and status.
+
+ * MongoDB Relationships: Fully integrated data relationships using @DBRef to link collections efficiently.
+
+
+
+

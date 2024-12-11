@@ -16,5 +16,5 @@ public class User {
     private String password;
     private List<String> roles;
     private boolean isActive;
-    private String customerId; // Only include customerId
+    private String customerId; // Only include customerId  Reference to the customer
 }
