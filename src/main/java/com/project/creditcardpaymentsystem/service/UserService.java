@@ -19,7 +19,7 @@ public class UserService {
     }
 
     public void saveUser(User user){
-        user.setRoles(List.of("USER"));
+        user.setRoles(List.of("CUSTOMER"));
         userRepository.save(user);
     }
 

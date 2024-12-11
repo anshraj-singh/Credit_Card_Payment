@@ -1,11 +1,9 @@
 package com.project.creditcardpaymentsystem.entity;
+
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.List;
-
 
 @Document(collection = "credit_cards")
 @Data
@@ -15,6 +13,9 @@ public class CreditCard {
     private String cardNumber;
     private String cardHolderName;
     private String expirationDate; // Format: MM/YY
-    private String cvv; //! last three-digit number in back side
+    private String cvv; // last three-digit number in back side
     private String cardType; // e.g., Visa, MasterCard
+
+    @DBRef
+    private Customer customer; // Link to Customer
 }

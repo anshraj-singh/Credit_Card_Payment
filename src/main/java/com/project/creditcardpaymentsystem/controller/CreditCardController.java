@@ -4,6 +4,7 @@ package com.project.creditcardpaymentsystem.controller;
 import com.project.creditcardpaymentsystem.entity.CreditCard;
 import com.project.creditcardpaymentsystem.entity.Customer;
 import com.project.creditcardpaymentsystem.service.CreditCardService;
+import com.project.creditcardpaymentsystem.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ public class CreditCardController {
     @Autowired
     private CreditCardService creditCardService;
 
+    @Autowired
+    private CustomerService customerService;
+
     @GetMapping
     public ResponseEntity<List<CreditCard>> getAllCreditCards() {
         List<CreditCard> allCreditCards = creditCardService.findAllCreditCards();
@@ -29,14 +33,26 @@ public class CreditCardController {
     }
 
     @PostMapping
-    public ResponseEntity<CreditCard> createCreditCard(@RequestBody CreditCard creditCard) {
+    public ResponseEntity<?> createCreditCard(@RequestBody CreditCard creditCard) {
         try {
+            if (creditCard.getCustomer() != null && creditCard.getCustomer().getId() != null) {
+                Customer customer = customerService.getById(creditCard.getCustomer().getId()).orElse(null);
+                if (customer != null) {
+                    creditCard.setCustomer(customer);
+                } else {
+                    return new ResponseEntity<>("Customer not found", HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                return new ResponseEntity<>("Customer ID must be provided", HttpStatus.BAD_REQUEST);
+            }
+
             creditCardService.saveCreditCard(creditCard);
             return new ResponseEntity<>(creditCard, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error creating credit card: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @GetMapping("id/{myId}")
     public ResponseEntity<CreditCard> getCreditCardById(@PathVariable String myId) {

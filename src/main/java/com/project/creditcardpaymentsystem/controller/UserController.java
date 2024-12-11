@@ -1,6 +1,8 @@
 package com.project.creditcardpaymentsystem.controller;
 
+import com.project.creditcardpaymentsystem.entity.Customer;
 import com.project.creditcardpaymentsystem.entity.User;
+import com.project.creditcardpaymentsystem.service.CustomerService;
 import com.project.creditcardpaymentsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CustomerService customerService;
+
 
     @GetMapping
     public ResponseEntity<?> getAllUser(){
@@ -32,10 +37,11 @@ public class UserController {
     public ResponseEntity<?> createNewAccount(@RequestBody User user) {
         try {
             user.setActive(true); // Automatically activate a new user
+            user.setCustomerId(user.getCustomerId());
             userService.saveUser(user);
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error creating user: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -71,8 +77,8 @@ public class UserController {
                 existingUser.setRoles(newEntry.getRoles());
             }
 
-            if (newEntry.getCustomer() != null) {
-                existingUser.setCustomer(newEntry.getCustomer());
+            if (newEntry.getCustomerId() != null) {
+                existingUser.setCustomerId(newEntry.getCustomerId());
             }
 
             userService.saveUser(existingUser);

@@ -1,6 +1,7 @@
 package com.project.creditcardpaymentsystem.service;
 
 import com.project.creditcardpaymentsystem.entity.Customer;
+import com.project.creditcardpaymentsystem.entity.User;
 import com.project.creditcardpaymentsystem.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

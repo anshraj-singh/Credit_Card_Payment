@@ -1,6 +1,8 @@
 package com.project.creditcardpaymentsystem.controller;
 
+import com.project.creditcardpaymentsystem.entity.CreditCard;
 import com.project.creditcardpaymentsystem.entity.Transaction;
+import com.project.creditcardpaymentsystem.service.CreditCardService;
 import com.project.creditcardpaymentsystem.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,9 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private CreditCardService creditCardService;
+
     @GetMapping
     public ResponseEntity<List<Transaction>> getAllTransactions() {
         List<Transaction> allTransactions = transactionService.findAllTransactions();
@@ -29,8 +34,13 @@ public class TransactionController {
     @PostMapping
     public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) {
         try {
-            transactionService.saveTransaction(transaction);
-            return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+            CreditCard creditCard = creditCardService.getById(transaction.getCreditCard().getId()).orElse(null);
+            if (creditCard != null) {
+                transaction.setCreditCard(creditCard);
+                transactionService.saveTransaction(transaction);
+                return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+            }
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

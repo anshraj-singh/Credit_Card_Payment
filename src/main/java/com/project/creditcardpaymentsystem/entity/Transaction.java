@@ -1,4 +1,5 @@
 package com.project.creditcardpaymentsystem.entity;
+
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -17,4 +18,6 @@ public class Transaction {
     private String description;
     private String status; // PENDING, COMPLETED, FAILED
 
+    @DBRef
+    private CreditCard creditCard; // Link to CreditCard
 }
