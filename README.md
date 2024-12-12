@@ -122,5 +122,49 @@ transactions.
  * MongoDB Relationships: Fully integrated data relationships using @DBRef to link collections efficiently.
 
 
+## API Endpoints
 
+### Create Credit Card
+
+- **Endpoint:** `POST /credit-cards`
+- **Request Body:**
+    ```json
+    {
+        "cardNumber": "4111111111111111",
+        "cardHolderName": "John Doe",
+        "expirationDate": "12/25",
+        "cvv": "123",
+        "cardType": "Visa",
+        "customerId": "customerId123"  
+    }
+    ```
+- **Response:**
+  - **201 Created**: Returns the created credit card object.
+  - **400 Bad Request**: If the customer is not found or if validation fails.
+
+### Process Transaction
+
+- **Endpoint:** `POST /transactions`
+- **Request Body:**
+    ```json
+    {
+        "amount": 100.00,
+        "creditCardId": "creditCardId123",
+        "description": "Purchase at Store"
+    }
+    ```
+- **Response:**
+  - **201 Created**: Returns the transaction details.
+  - **400 Bad Request**: If the credit card is invalid or insufficient funds.
+
+### Example Request for Transaction
+
+```bash
+curl -X POST "http://localhost:8080/transactions" \
+-H "Content-Type: application/json" \
+-d '{
+    "amount": 100.00,
+    "creditCardId": "creditCardId123",
+    "description": "Purchase at Store"
+}'
 

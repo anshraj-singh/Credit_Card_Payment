@@ -33,10 +33,19 @@ public class CreditCardController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createCreditCard(@RequestBody CreditCard creditCard) {
+    public ResponseEntity<?> createCreditCard(@RequestBody CreditCard creditCard, @RequestParam String customerId) {
         try {
-            creditCardService.saveCreditCard(creditCard);
-            return new ResponseEntity<>(creditCard, HttpStatus.CREATED);
+            // Find the customer by ID
+            Customer customer = customerService.getById(customerId).orElse(null);
+            if (customer != null) {
+                // Save the credit card
+                creditCardService.saveCreditCard(creditCard);
+                // Add the credit card to the customer's list
+                customer.getCreditCards().add(creditCard);
+                customerService.saveCustomer(customer); // Save the updated customer
+                return new ResponseEntity<>(creditCard, HttpStatus.CREATED);
+            }
+            return new ResponseEntity<>("Customer not found", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>("Error creating credit card: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
