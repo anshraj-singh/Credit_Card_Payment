@@ -5,6 +5,7 @@ import com.project.creditcardpaymentsystem.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,8 @@ public class TransactionService {
     }
 
     public void saveTransaction(Transaction transaction) {
+        transaction.setTransactionDate(LocalDateTime.now()); // Set current date and time
+        transaction.setStatus("PENDING"); // Set default status
         transactionRepository.save(transaction);
     }
 

@@ -37,23 +37,25 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) {
+    public ResponseEntity<?> createTransaction(@RequestBody Transaction transaction) {
         try {
             CreditCard creditCard = creditCardService.getById(transaction.getCreditCard().getId()).orElse(null);
             if (creditCard != null) {
                 transaction.setCreditCard(creditCard);
                 transactionService.saveTransaction(transaction);
-                // Optionally, you can also add the transaction to the customer
+
+                // Find the customer associated with the credit card
                 Customer customer = customerService.getById(creditCard.getId()).orElse(null);
                 if (customer != null) {
+                    // Add the transaction to the customer's list of transactions
                     customer.getTransactions().add(transaction);
                     customerService.saveCustomer(customer); // Save the updated customer
                 }
                 return new ResponseEntity<>(transaction, HttpStatus.CREATED);
             }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Credit Card not found", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Error creating transaction: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
