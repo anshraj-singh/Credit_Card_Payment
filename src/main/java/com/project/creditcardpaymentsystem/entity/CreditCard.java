@@ -14,4 +14,5 @@ public class CreditCard {
     private String expirationDate; // Format: MM/YY
     private String cvv; // last three-digit number in back side
     private String cardType; // e.g., Visa, MasterCard
+    private String customerId; // Link to Customer
 }

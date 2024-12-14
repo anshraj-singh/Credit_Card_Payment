@@ -1,7 +1,7 @@
 package com.project.creditcardpaymentsystem.entity;
+
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
@@ -17,9 +17,6 @@ public class Customer {
     private String phone;
     private String address;
 
-    @DBRef
-    private List<CreditCard> creditCards = new ArrayList<>(); // Link to CreditCard entities
-
-    @DBRef
-    private List<Transaction> transactions = new ArrayList<>(); // Link to Transaction entities
+    private List<String> creditCardIds = new ArrayList<>(); // Store CreditCard IDs
+    private List<String> transactionIds = new ArrayList<>(); // Store Transaction IDs
 }

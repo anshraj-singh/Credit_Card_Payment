@@ -40,9 +40,11 @@ public class CreditCardController {
             if (customer != null) {
                 // Save the credit card
                 creditCardService.saveCreditCard(creditCard);
-                // Add the credit card to the customer's list
-                customer.getCreditCards().add(creditCard);
+                // Add the credit card ID to the customer's list
+                customer.getCreditCardIds().add(creditCard.getId());
+                creditCard.setCustomerId(customerId);
                 customerService.saveCustomer(customer); // Save the updated customer
+                creditCardService.saveCreditCard(creditCard);
                 return new ResponseEntity<>(creditCard, HttpStatus.CREATED);
             }
             return new ResponseEntity<>("Customer not found", HttpStatus.BAD_REQUEST);

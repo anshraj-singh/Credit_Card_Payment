@@ -39,16 +39,16 @@ public class TransactionController {
     @PostMapping
     public ResponseEntity<?> createTransaction(@RequestBody Transaction transaction) {
         try {
-            CreditCard creditCard = creditCardService.getById(transaction.getCreditCard().getId()).orElse(null);
+            CreditCard creditCard = creditCardService.getById(transaction.getCreditCardId()).orElse(null);
             if (creditCard != null) {
-                transaction.setCreditCard(creditCard);
+                transaction.setCreditCardId(creditCard.getId());
                 transactionService.saveTransaction(transaction);
 
                 // Find the customer associated with the credit card
-                Customer customer = customerService.getById(creditCard.getId()).orElse(null);
+                Customer customer = customerService.getById(creditCard.getCustomerId()).orElse(null);
                 if (customer != null) {
-                    // Add the transaction to the customer's list of transactions
-                    customer.getTransactions().add(transaction);
+                    // Add the transaction ID to the customer's list
+                    customer.getTransactionIds().add(transaction.getId());
                     customerService.saveCustomer(customer); // Save the updated customer
                 }
                 return new ResponseEntity<>(transaction, HttpStatus.CREATED);

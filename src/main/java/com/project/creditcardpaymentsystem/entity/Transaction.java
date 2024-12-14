@@ -17,7 +17,6 @@ public class Transaction {
     private LocalDateTime transactionDate;
     private String description;
     private String status; // PENDING, COMPLETED, FAILED
-
-    @DBRef
-    private CreditCard creditCard; // Link to CreditCard
+    private String creditCardId; // Link to CreditCard
+    private String customerId; // Link to Customer
 }
