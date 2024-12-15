@@ -30,8 +30,4 @@ public class CreditCardService {
     public void deleteById(String myId) {
         creditCardRepository.deleteById(myId);
     }
-
-    public CreditCard findByCardHolderName(String cardHolderName){
-        return creditCardRepository.findByCardHolderName(cardHolderName);
-    }
 }

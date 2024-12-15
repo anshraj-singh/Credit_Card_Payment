@@ -30,8 +30,4 @@ public class CustomerService {
     public void deleteById(String myId) {
         customerRepository.deleteById(myId);
     }
-
-    public Customer findByName(String name){
-        return customerRepository.findByName(name);
-    }
 }
