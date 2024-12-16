@@ -22,7 +22,7 @@ public class TransactionService {
 
     public void saveTransaction(Transaction transaction) {
         transaction.setTransactionDate(LocalDateTime.now()); // Set current date and time
-        transaction.setStatus("PENDING"); // Set default status
+        transaction.setStatus("COMPLETED"); // Set default status
         transactionRepository.save(transaction);
     }
 

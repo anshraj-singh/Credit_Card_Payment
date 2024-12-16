@@ -25,6 +25,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable() // Disable CSRF for APIs
                 .authorizeRequests()
                 .antMatchers("/Users/id/{myId}").authenticated() // Protect all /Users endpoints
+                .antMatchers("/Users/current/**").authenticated()
                 .anyRequest().permitAll() // Allow public access to other endpoints
                 .and()
                 .httpBasic(); // Use Basic Authentication

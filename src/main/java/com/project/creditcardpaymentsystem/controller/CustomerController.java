@@ -42,7 +42,7 @@ public class CustomerController {
                 // Assuming the User ID is passed in the request body
                 User user = userService.findByUsername(customer.getName()); // or however you identify the user
                 if (user != null) {
-                    user.setCustomerId(customer.getId());
+                    user.getCustomerId().add(customer);
                     userService.saveUser (user); // Save the updated user
                 }
             }

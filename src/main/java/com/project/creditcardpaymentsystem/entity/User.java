@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,7 +16,7 @@ public class User {
     private String id;
     private String username;
     private String password;
-    private List<String> roles;
-    private boolean isActive;
-    private String customerId; // Only include customerId  Reference to the customer
+    private List<String> roles; // e.g., ["ROLE_USER", "ROLE_ADMIN"]
+    @DBRef
+    private List<Customer> customers = new ArrayList<>(); // Only include customerId  Reference to the customer
 }

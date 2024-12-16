@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 public class Transaction {
     @Id
     private String id;
+    private String creditCardId; // Link to CreditCard
     private double amount;
     private String currency;
     private LocalDateTime transactionDate;
     private String description;
     private String status; // PENDING, COMPLETED, FAILED
-    private String creditCardId; // Link to CreditCard
-    private String customerId; // Link to Customer
+
 }

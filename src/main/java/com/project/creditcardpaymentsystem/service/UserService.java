@@ -25,8 +25,7 @@ public class UserService {
 
     public void saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt password
-        user.setActive(true);
-        user.setRoles(List.of("CUSTOMER")); // Default role
+        user.setRoles(List.of("USER"));
         userRepository.save(user);
     }
 
