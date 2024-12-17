@@ -7,10 +7,13 @@ import com.project.creditcardpaymentsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/customers")
@@ -24,39 +27,37 @@ public class CustomerController {
 
     @GetMapping
     public ResponseEntity<?> getAllCustomers() {
-        List<Customer> allCustomers = customerService.findAllCustomers();
-        if (!allCustomers.isEmpty()) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+        List<Customer> allCustomers = user.getCustomers();
+        if (allCustomers != null && !allCustomers.isEmpty()) {
             return new ResponseEntity<>(allCustomers, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
-    public ResponseEntity<?> createCustomer(@RequestBody Customer customer) {
+    public ResponseEntity<?> createCustomer(@RequestBody Customer myCustomer) {
         try {
-            // Save the customer first
-            customerService.saveCustomer(customer);
-
-            // Now update the associated user with the new customerId
-            if (customer.getId() != null) {
-                // Assuming the User ID is passed in the request body
-                User user = userService.findByUsername(customer.getName()); // or however you identify the user
-                if (user != null) {
-                    user.getCustomerId().add(customer);
-                    userService.saveUser (user); // Save the updated user
-                }
-            }
-
-            return new ResponseEntity<>(customer, HttpStatus.CREATED);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userName = authentication.getName();
+            customerService.saveNewCustomer(myCustomer,userName);
+            User updatedUser = userService.findByUsername(userName);
+            return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("id/{myId}")
-    public ResponseEntity<?> getCustomerById(@PathVariable String myId) {
+    public ResponseEntity<Customer> getCustomerById(@PathVariable String myId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        User user = userService.findByUsername(userName);
+
         Optional<Customer> customer = customerService.getById(myId);
-        if (customer.isPresent()) {
+        if (customer.isPresent() && user.getCustomers().contains(customer.get())) {
             return new ResponseEntity<>(customer.get(), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -64,18 +65,23 @@ public class CustomerController {
 
     @PutMapping("id/{myId}")
     public ResponseEntity<Customer> updateCustomer(@PathVariable String myId, @RequestBody Customer updatedCustomer) {
-        Customer existingCustomer = customerService.getById(myId).orElse(null);
-        if (existingCustomer != null) {
-            if (updatedCustomer.getName() != null && !updatedCustomer.getName().isEmpty()) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        User user = userService.findByUsername(userName);
+
+        Optional<Customer> customerOpt = customerService.getById(myId);
+        if (customerOpt.isPresent() && user.getCustomers().contains(customerOpt.get())) {
+            Customer existingCustomer = customerOpt.get();
+            if (updatedCustomer.getName() != null) {
                 existingCustomer.setName(updatedCustomer.getName());
             }
-            if (updatedCustomer.getEmail() != null && !updatedCustomer.getEmail().isEmpty()) {
+            if (updatedCustomer.getEmail() != null) {
                 existingCustomer.setEmail(updatedCustomer.getEmail());
             }
-            if (updatedCustomer.getPhone() != null && !updatedCustomer.getPhone().isEmpty()) {
+            if (updatedCustomer.getPhone() != null) {
                 existingCustomer.setPhone(updatedCustomer.getPhone());
             }
-            if (updatedCustomer.getAddress() != null && !updatedCustomer.getAddress().isEmpty()) {
+            if (updatedCustomer.getAddress() != null) {
                 existingCustomer.setAddress(updatedCustomer.getAddress());
             }
             customerService.saveCustomer(existingCustomer);
@@ -85,8 +91,10 @@ public class CustomerController {
     }
 
     @DeleteMapping("id/{myId}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable String myId) {
-        customerService.deleteById(myId);
+    public ResponseEntity<?> deleteCustomer(@PathVariable String myId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        customerService.deleteById(myId,userName);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

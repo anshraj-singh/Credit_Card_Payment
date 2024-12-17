@@ -47,9 +47,8 @@ public class TransactionController {
                 // Find the customer associated with the credit card
                 Customer customer = customerService.getById(creditCard.getCustomerId()).orElse(null);
                 if (customer != null) {
-                    // Add the transaction ID to the customer's list
                     customer.getTransactionIds().add(transaction.getId());
-                    customerService.saveCustomer(customer); // Save the updated customer
+                    customerService.saveCustomer(customer);
                 }
                 return new ResponseEntity<>(transaction, HttpStatus.CREATED);
             }
@@ -62,10 +61,8 @@ public class TransactionController {
     @GetMapping("id/{myId}")
     public ResponseEntity<Transaction> getTransactionById(@PathVariable String myId) {
         Optional<Transaction> transaction = transactionService.getById(myId);
-        if(transaction.isPresent()){
-            return new ResponseEntity<>(transaction.get(),HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return transaction.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping("id/{myId}")

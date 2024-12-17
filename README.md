@@ -159,7 +159,7 @@ transactions.
 
 ### Example Request for Transaction
 
-```bash
+bash
 curl -X POST "http://localhost:8080/transactions" \
 -H "Content-Type: application/json" \
 -d '{
@@ -168,3 +168,98 @@ curl -X POST "http://localhost:8080/transactions" \
     "description": "Purchase at Store"
 }'
 
+# Credit Card Payment System [UPDATE]
+
+This project implements a Credit Card Payment System with secure user authentication and authorization. It uses **Spring Boot** for the backend, **MongoDB** for the database, and **Spring Security** for securing the endpoints.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Entities](#entities)
+  - [CreditCard](#creditcard)
+  - [Transaction](#transaction)
+  - [Customer](#customer)
+- [Controllers](#controllers)
+  - [CreditCardController](#creditcardcontroller)
+  - [TransactionController](#transactioncontroller)
+- [Services](#services)
+  - [CreditCardService](#creditcardservice)
+  - [TransactionService](#transactionservice)
+- [Security Configuration](#security-configuration)
+- [API Endpoints](#api-endpoints)
+- [Setup](#setup)
+- [Technologies](#technologies)
+
+## Overview
+
+The Credit Card Payment System allows users to:
+
+1. Create and manage customers and their credit cards.
+2. Process transactions securely.
+3. Retrieve and update transaction details.
+
+The system is secured using **Basic Authentication** and **Spring Security** to control access to sensitive endpoints.
+
+---
+
+## Entities
+
+### CreditCard
+
+The `CreditCard` entity represents a credit card with fields such as `cardNumber`, `cardHolderName`, `expirationDate`, `cvv`, and a reference to the associated customer.
+
+### Transaction
+
+The `Transaction` entity represents a transaction made with a credit card. It includes details like `amount`, `currency`, `transactionDate`, and `status`.
+
+### Customer
+
+The `Customer` entity represents a customer in the system. It contains basic customer information like `name`, `email`, and lists of associated credit card IDs and transaction IDs.
+
+---
+
+## Controllers
+
+### CreditCardController
+
+Handles CRUD operations for credit cards. The controller includes methods to fetch, create, update, and delete credit cards.
+
+### TransactionController
+
+Manages transactions. It includes methods for retrieving all transactions, creating new transactions, updating existing ones, and deleting transactions.
+
+---
+
+## Services
+
+### CreditCardService
+
+Provides services to handle CRUD operations for credit cards, including saving, fetching, and deleting credit card information.
+
+### TransactionService
+
+Handles transaction management, including saving transactions, fetching transaction details, and deleting transactions.
+
+---
+
+## Security Configuration
+
+The system is secured using **Spring Security**. Basic Authentication is applied to the endpoints, ensuring that only authenticated users can access sensitive data. The system does not use role-based access control but ensures that only authenticated users can access the APIs related to credit cards and transactions.
+
+---
+
+## API Endpoints
+
+- **GET /credit-cards**: Retrieve all credit cards.
+- **POST /credit-cards**: Create a new credit card.
+- **GET /credit-cards/id/{id}**: Retrieve a credit card by ID.
+- **PUT /credit-cards/id/{id}**: Update a credit card by ID.
+- **DELETE /credit-cards/id/{id}**: Delete a credit card by ID.
+
+- **GET /transactions**: Retrieve all transactions.
+- **POST /transactions**: Create a new transaction.
+- **GET /transactions/id/{id}**: Retrieve a transaction by ID.
+- **PUT /transactions/id/{id}**: Update a transaction by ID.
+- **DELETE /transactions/id/{id}**: Delete a transaction by ID.
+
+---
