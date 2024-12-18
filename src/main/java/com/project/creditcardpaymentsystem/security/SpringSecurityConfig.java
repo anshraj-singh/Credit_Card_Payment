@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -25,13 +24,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/Users/me", "/Users/update-user", "/customers/**","/credit-cards/**","/transactions/**").authenticated()
+                .antMatchers("/admin/**").hasRole("ADMIN") // Only ROLE_ADMIN can access /admin/*
+                .antMatchers("/Users/me", "/Users/update-user", "/customers/**", "/credit-cards/**", "/transactions/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .httpBasic(); // Use Basic Authentication
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
-
-
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

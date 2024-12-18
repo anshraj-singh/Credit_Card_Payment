@@ -25,18 +25,6 @@ public class CustomerController {
     @Autowired
     private UserService userService; // Add UserService to update User
 
-    @GetMapping
-    public ResponseEntity<?> getAllCustomers() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.findByUsername(username);
-        List<Customer> allCustomers = user.getCustomers();
-        if (allCustomers != null && !allCustomers.isEmpty()) {
-            return new ResponseEntity<>(allCustomers, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
     @PostMapping
     public ResponseEntity<?> createCustomer(@RequestBody Customer myCustomer) {
         try {
