@@ -263,3 +263,75 @@ The system is secured using **Spring Security**. Basic Authentication is applied
 - **DELETE /transactions/id/{id}**: Delete a transaction by ID.
 
 ---
+
+
+## Credit Card Payment System[UPDATE]
+
+### Features
+
+1. **Admin Role-Based Access Control:**
+  - Introduced a dedicated `/admin` endpoint for admin users to access restricted data.
+  - Only users with the `ROLE_ADMIN` role can access the `/admin/**` endpoints.
+  - Utilized Spring Security for role-based access control.
+
+2. **Admin Endpoints:**
+  - **`GET /admin/all-customers`**:
+    - Fetches all customers from the database.
+    - Only accessible by users with the `ROLE_ADMIN` role.
+    - Returns a list of all customers with a `200 OK` or `404 Not Found` if no customers exist.
+
+3. **Security Enhancements:**
+  - Configured **Spring Security** to restrict access:
+    - `/admin/**` endpoints are restricted to users with `ROLE_ADMIN`.
+    - Other endpoints like `/Users/me`, `/customers/**`, and `/transactions/**` require authentication.
+    - Basic Authentication is implemented for simplicity.
+  - Passwords are stored securely with `BCryptPasswordEncoder`.
+
+4. **Service Refactoring:**
+  - Introduced a `CustomerService` to fetch all customers, decoupling database operations from controllers.
+  - Ensures modularity and better code organization.
+
+5. **Repository Updates:**
+  - Added a `CustomerRepository` interface for accessing customer data.
+
+### Endpoints Summary
+
+#### **Admin Endpoints**
+- **`GET /admin/all-customers`**
+  - **Description:** Fetches a list of all customers in the system.
+  - **Access Control:** Restricted to users with `ROLE_ADMIN`.
+  - **Response Examples:**
+    - **200 OK:**
+      ```json
+      [
+        {
+          "id": "customer123",
+          "name": "John Doe",
+          "email": "johndoe@example.com"
+        },
+        {
+          "id": "customer124",
+          "name": "Jane Smith",
+          "email": "janesmith@example.com"
+        }
+      ]
+      ```
+    - **404 Not Found:**
+      ```json
+      {
+        "message": "No customers found."
+      }
+      ```
+
+#### **Security Configuration**
+- `/admin/**` → Accessible by `ROLE_ADMIN`.
+- `/Users/me`, `/customers/**`, `/transactions/**` → Accessible to authenticated users.
+
+### How to Test
+1. **Start the Server:**
+  - Ensure the application is running on the appropriate port (e.g., `http://localhost:8080`).
+2. **Admin Authentication:**
+  - Use **Basic Auth** in Postman (admin credentials are required).
+3. **Endpoint Testing:**
+  - Test `/admin/all-customers` for fetching all customers.
+  - Confirm restricted access for non-admin users.
