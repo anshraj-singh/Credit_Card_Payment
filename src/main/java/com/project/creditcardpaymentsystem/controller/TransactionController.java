@@ -53,6 +53,8 @@ public class TransactionController {
                 return new ResponseEntity<>(transaction, HttpStatus.CREATED);
             }
             return new ResponseEntity<>("Credit Card not found", HttpStatus.BAD_REQUEST);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Error creating transaction: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>("Error creating transaction: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
