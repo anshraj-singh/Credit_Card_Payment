@@ -335,3 +335,15 @@ The system is secured using **Spring Security**. Basic Authentication is applied
 3. **Endpoint Testing:**
   - Test `/admin/all-customers` for fetching all customers.
   - Confirm restricted access for non-admin users.
+
+## Transaction Processing Update
+TransactionService:
+
+- Implemented functionality to deduct the transaction amount from the credit card balance during transaction processing.
+- Added checks for sufficient balance before completing a transaction.
+
+
+TransactionController:
+
+- Enhanced error handling to provide meaningful feedback for insufficient funds or when a credit card is not found.
+- Updated response messages to improve user experience.
