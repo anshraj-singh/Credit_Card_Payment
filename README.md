@@ -347,3 +347,46 @@ TransactionController:
 
 - Enhanced error handling to provide meaningful feedback for insufficient funds or when a credit card is not found.
 - Updated response messages to improve user experience.
+
+
+## Email Notifications Feature Update
+
+### Introduction
+
+The recent update to the Email Notifications feature enhances communication with customers regarding their transactions. Customers will now receive immediate email notifications after a transaction is processed, ensuring they are informed about their financial activities.
+
+### Key Features
+
+- **Automatic Email Notifications**: Customers receive an email notification immediately after a transaction is processed.
+- **Email Content**: The email includes:
+    - The amount of the transaction.
+    - A confirmation that the transaction has been processed.
+    - A subject line indicating it is a transaction notification.
+
+### Implementation Details
+
+1. **Transaction Entity**:
+    - The `Transaction` entity has been updated to remove the `customerEmail` field. The email is now derived from the associated `Customer` entity.
+
+2. **Email Service**:
+    - The `EmailService` class is responsible for sending email notifications using `JavaMailSender`.
+
+3. **Transaction Service Logic**:
+    - When a transaction is saved, the system checks the associated credit card for sufficient balance.
+    - Upon successful transaction processing, the system retrieves the customer's email from the `Customer` entity linked to the credit card.
+    - An email notification is sent to the customer using the `EmailService`.
+
+### Error Handling
+
+- **Insufficient Balance**: If the credit card does not have enough balance, an exception is thrown, and no email is sent.
+- **Customer Not Found**: If the customer associated with the credit card cannot be found, an appropriate error message is logged.
+
+### Testing the Feature
+
+1. **Create a Transaction**: Test the feature by creating a transaction through the API.
+2. **Verify Email Receipt**: Check the email inbox of the customer to ensure the notification is received with the correct details.
+3. **Monitor Logs**: Review application logs for any errors related to email sending or transaction processing.
+
+### Conclusion
+
+This update to the Email Notifications feature significantly improves customer engagement by providing timely updates on transaction statuses. The implementation ensures that customers are informed promptly, enhancing their overall experience with the Credit Card Payment System.
