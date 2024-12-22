@@ -18,7 +18,13 @@ public class TransactionService {
     private TransactionRepository transactionRepository;
 
     @Autowired
-    private CreditCardService creditCardService; // Add CreditCardService
+    private CreditCardService creditCardService;
+
+    @Autowired
+    private CustomerService customerService; // Add CustomerService
+
+    @Autowired
+    private EmailService emailService;
 
     public List<Transaction> findAllTransactions() {
         return transactionRepository.findAll();
@@ -34,7 +40,19 @@ public class TransactionService {
             if (creditCard.getBalance() >= transaction.getAmount()) {
                 creditCard.setBalance(creditCard.getBalance() - transaction.getAmount()); // Deduct the amount
                 creditCardService.saveCreditCard(creditCard); // Save updated credit card
-                transactionRepository.save(transaction); // Save transaction
+
+                // Retrieve the customer associated with the credit card
+                Customer customer = customerService.getById(creditCard.getCustomerId()).orElse(null);
+                if (customer != null) {
+                    // Save the transaction
+                    transactionRepository.save(transaction); // Save transaction
+
+                    // Send email notification
+                    String emailBody = "Transaction of amount " + transaction.getAmount() + " has been processed.";
+                    emailService.sendTransactionNotification(customer.getEmail(), "Transaction Notification", emailBody);
+                } else {
+                    throw new RuntimeException("Customer not found.");
+                }
             } else {
                 throw new RuntimeException("Insufficient balance on the credit card.");
             }
@@ -43,11 +61,11 @@ public class TransactionService {
         }
     }
 
-    public Optional<Transaction> getById(String myId){
+    public Optional<Transaction> getById(String myId) {
         return transactionRepository.findById(myId);
     }
 
-    public void deleteById(String myId){
+    public void deleteById(String myId) {
         transactionRepository.deleteById(myId);
     }
 }
