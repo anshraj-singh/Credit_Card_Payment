@@ -390,3 +390,39 @@ The recent update to the Email Notifications feature enhances communication with
 ### Conclusion
 
 This update to the Email Notifications feature significantly improves customer engagement by providing timely updates on transaction statuses. The implementation ensures that customers are informed promptly, enhancing their overall experience with the Credit Card Payment System.
+
+## Customer Creation Confirmation Email Feature
+
+This feature sends a confirmation email to users upon successful account creation. The email includes the user's details and a plain text password.
+
+### Implementation Steps
+
+1. **Email Service Setup**:
+    - Ensure the `spring-boot-starter-mail` dependency is included in your `pom.xml`.
+    - Configure email properties in `application.properties`.
+
+2. **Email Service Class**:
+    - Create a service class to handle sending emails using `JavaMailSender`.
+
+3. **Customer Creation Logic**:
+    - Modify the customer creation logic to send a confirmation email after a new customer is created.
+
+4. **Security Considerations**:
+    - Avoid sending plain text passwords in emails. Consider sending a password reset link instead.
+
+5. **Testing**:
+    - Test the email functionality to ensure users receive confirmation emails with their details.
+
+### Example Code Snippet
+
+Here’s a brief example of how the email sending functionality is integrated:
+
+```java
+@Autowired
+private EmailService emailService;
+
+@PostMapping("/customers")
+public ResponseEntity<?> createCustomer(@RequestBody Customer newCustomer) {
+    // Save customer and send confirmation email
+    emailService.sendConfirmationEmail(newCustomer.getEmail(), subject, body);
+}
