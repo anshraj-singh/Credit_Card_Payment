@@ -3,6 +3,7 @@ package com.project.creditcardpaymentsystem.controller;
 import com.project.creditcardpaymentsystem.entity.Customer;
 import com.project.creditcardpaymentsystem.entity.User;
 import com.project.creditcardpaymentsystem.service.CustomerService;
+import com.project.creditcardpaymentsystem.service.EmailService;
 import com.project.creditcardpaymentsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,14 +26,30 @@ public class CustomerController {
     @Autowired
     private UserService userService; // Add UserService to update User
 
+    @Autowired
+    private EmailService emailService;
+
     @PostMapping
     public ResponseEntity<?> createCustomer(@RequestBody Customer myCustomer) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String userName = authentication.getName();
-            customerService.saveNewCustomer(myCustomer,userName);
-            User updatedUser = userService.findByUsername(userName);
-            return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
+            User user = userService.findByUsername(userName);
+            customerService.saveNewCustomer(myCustomer, userName);
+
+            // Send confirmation email
+            String subject = "Welcome to the Credit Card Payment System";
+            String body = "Dear " + myCustomer.getName() + ",\n\n" +
+                    "Your account has been successfully created.\n" +
+                    "Username: " + user.getUsername() + "\n" +
+                    "Password: " + user.getPassword() + "\n\n" +
+                    "Thank you for joining us!\n" +
+                    "Best regards,\n" +
+                    "Credit Card Payment System Team";
+
+            emailService.sendTransactionNotification(myCustomer.getEmail(),subject, body);
+            User updateUser = userService.findByUsername(userName);
+            return new ResponseEntity<>(updateUser, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
