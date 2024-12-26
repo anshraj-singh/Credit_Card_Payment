@@ -21,7 +21,7 @@ public class TransactionService {
     private CreditCardService creditCardService;
 
     @Autowired
-    private CustomerService customerService; // Add CustomerService
+    private CustomerService customerService;
 
     @Autowired
     private EmailService emailService;
@@ -48,7 +48,18 @@ public class TransactionService {
                     transactionRepository.save(transaction); // Save transaction
 
                     // Send email notification
-                    String emailBody = "Transaction of amount " + transaction.getAmount() + " has been processed.";
+                    String emailBody = String.format("Dear %s,\n\n" +
+                                    "Your transaction of amount %.2f %s has been successfully processed.\n" +
+                                    "Transaction ID: %s\n" +
+                                    "Credit Card ID: %s\n" +
+                                    "Transaction Date: %s\n" +
+                                    "Status: %s\n\n" +
+                                    "Thank you for using our service!\n" +
+                                    "Best regards,\n" +
+                                    "Credit Card Payment System Team",
+                            customer.getName(), transaction.getAmount(), transaction.getCurrency(),
+                            transaction.getId(), creditCard.getId(), transaction.getTransactionDate(), transaction.getStatus());
+
                     emailService.sendTransactionNotification(customer.getEmail(), "Transaction Notification", emailBody);
                 } else {
                     throw new RuntimeException("Customer not found.");
