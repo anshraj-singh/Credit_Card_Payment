@@ -426,3 +426,23 @@ public ResponseEntity<?> createCustomer(@RequestBody Customer newCustomer) {
     // Save customer and send confirmation email
     emailService.sendConfirmationEmail(newCustomer.getEmail(), subject, body);
 }
+```
+
+## Update: Credit Card Limit Management Feature
+
+### Overview
+The Credit Card Limit Management feature has been enhanced to ensure that the spending limit is correctly enforced during transactions. 
+
+### Changes Made
+- **Spending Limit Deduction**: After a successful transaction, the transaction amount is now deducted from both the credit card's balance and the spending limit. This ensures that users cannot exceed their set spending limits.
+
+### Implementation Details
+- The `spendingLimit` field in the `CreditCard` entity is now updated during the transaction processing in the `TransactionService`.
+- The transaction processing logic checks if the transaction amount exceeds the spending limit before allowing the transaction to proceed.
+
+### Testing
+- Ensure to test the following scenarios:
+  1. Transactions below the spending limit should succeed and deduct the amount from both the balance and the spending limit.
+  2. Transactions equal to the spending limit should succeed and deduct the amount from both the balance and the spending limit.
+  3. Transactions above the spending limit should fail as expected.
+  4. Multiple transactions should correctly update the spending limit after each transaction.

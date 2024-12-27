@@ -37,8 +37,15 @@ public class TransactionService {
         // Deduct amount from the credit card
         CreditCard creditCard = creditCardService.getById(transaction.getCreditCardId()).orElse(null);
         if (creditCard != null) {
-            if (creditCard.getBalance() >= transaction.getAmount()) {
+            // Check if the transaction amount exceeds the spending limit
+            if (creditCard.getBalance() >= transaction.getAmount() &&
+                    (creditCard.getSpendingLimit() == 0 || transaction.getAmount() <= creditCard.getSpendingLimit())) {
+
+                // Deduct the amount from the credit card balance
                 creditCard.setBalance(creditCard.getBalance() - transaction.getAmount()); // Deduct the amount
+                // Deduct the amount from the spending limit
+                creditCard.setSpendingLimit(creditCard.getSpendingLimit() - transaction.getAmount()); // Deduct from spending limit
+
                 creditCardService.saveCreditCard(creditCard); // Save updated credit card
 
                 // Retrieve the customer associated with the credit card
@@ -65,7 +72,7 @@ public class TransactionService {
                     throw new RuntimeException("Customer not found.");
                 }
             } else {
-                throw new RuntimeException("Insufficient balance on the credit card.");
+                throw new RuntimeException("Transaction amount exceeds spending limit or insufficient balance.");
             }
         } else {
             throw new RuntimeException("Credit Card not found.");
