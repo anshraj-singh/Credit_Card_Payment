@@ -61,11 +61,13 @@ public class TransactionService {
                                     "Credit Card ID: %s\n" +
                                     "Transaction Date: %s\n" +
                                     "Status: %s\n\n" +
+                                    "Your current credit card balance is: %.2f\n\n" + // Added current balance
                                     "Thank you for using our service!\n" +
                                     "Best regards,\n" +
                                     "Credit Card Payment System Team",
                             customer.getName(), transaction.getAmount(), transaction.getCurrency(),
-                            transaction.getId(), creditCard.getId(), transaction.getTransactionDate(), transaction.getStatus());
+                            transaction.getId(), creditCard.getId(), transaction.getTransactionDate(), transaction.getStatus(),
+                            creditCard.getBalance()); // Include current balance in the email
 
                     emailService.sendTransactionNotification(customer.getEmail(), "Transaction Notification", emailBody);
                 } else {
