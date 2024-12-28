@@ -34,26 +34,30 @@ public class TransactionService {
         transaction.setTransactionDate(LocalDateTime.now()); // Set current date and time
         transaction.setStatus("COMPLETED"); // Set default status
 
-        // Deduct amount from the credit card
+        // Retrieve the credit card associated with the transaction
         CreditCard creditCard = creditCardService.getById(transaction.getCreditCardId()).orElse(null);
         if (creditCard != null) {
             // Check if the transaction amount exceeds the spending limit
-            if (creditCard.getBalance() >= transaction.getAmount() &&
-                    (creditCard.getSpendingLimit() == 0 || transaction.getAmount() <= creditCard.getSpendingLimit())) {
-
+            if (transaction.getAmount() <= creditCard.getSpendingLimit()) {
+                // Proceed with the transaction
                 // Deduct the amount from the credit card balance
-                creditCard.setBalance(creditCard.getBalance() - transaction.getAmount()); // Deduct the amount
-                // Deduct the amount from the spending limit
-                creditCard.setSpendingLimit(creditCard.getSpendingLimit() - transaction.getAmount()); // Deduct from spending limit
+                if(creditCard.getBalance() > 0){
+                    creditCard.setBalance(creditCard.getBalance() - transaction.getAmount()); // Deduct the amount
+                }
+                // Deduct from spending limit
+                if (creditCard.getSpendingLimit() > 0) {
+                    creditCard.setSpendingLimit(creditCard.getSpendingLimit() - transaction.getAmount()); // Deduct from spending limit
+                }
 
-                creditCardService.saveCreditCard(creditCard); // Save updated credit card
+                // Save updated credit card
+                creditCardService.saveCreditCard(creditCard);
+
+                // Save the transaction
+                transactionRepository.save(transaction); // Save transaction
 
                 // Retrieve the customer associated with the credit card
                 Customer customer = customerService.getById(creditCard.getCustomerId()).orElse(null);
                 if (customer != null) {
-                    // Save the transaction
-                    transactionRepository.save(transaction); // Save transaction
-
                     // Send email notification
                     String emailBody = String.format("Dear %s,\n\n" +
                                     "Your transaction of amount %.2f %s has been successfully processed.\n" +
@@ -74,7 +78,7 @@ public class TransactionService {
                     throw new RuntimeException("Customer not found.");
                 }
             } else {
-                throw new RuntimeException("Transaction amount exceeds spending limit or insufficient balance.");
+                throw new RuntimeException("Transaction amount exceeds spending limit.");
             }
         } else {
             throw new RuntimeException("Credit Card not found.");

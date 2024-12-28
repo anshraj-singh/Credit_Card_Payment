@@ -67,6 +67,11 @@ public class CreditCardController {
                 Customer customer = customerOptional.get();
                 creditCard.setCustomerId(customerId);
 
+                // Ensure spending limit is set correctly
+                if (creditCard.getSpendingLimit() < 0) {
+                    return new ResponseEntity<>("Spending limit cannot be negative", HttpStatus.BAD_REQUEST);
+                }
+
                 // Save credit card and update the customer
                 creditCardService.saveCreditCard(creditCard);
                 customer.getCreditCardIds().add(creditCard.getId());
