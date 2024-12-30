@@ -446,3 +446,26 @@ The Credit Card Limit Management feature has been enhanced to ensure that the sp
   2. Transactions equal to the spending limit should succeed and deduct the amount from both the balance and the spending limit.
   3. Transactions above the spending limit should fail as expected.
   4. Multiple transactions should correctly update the spending limit after each transaction.
+
+## Monthly Spending Reports
+
+### Feature Description
+
+The Monthly Spending Reports feature allows users to generate a report summarizing their transactions for a specific month. The report is sent to the customer's email address and includes details such as transaction dates, amounts, descriptions, and the total spent for the month.
+
+### How to Use
+
+1. **Generate Monthly Report**:
+    - Endpoint: `POST /reports/monthly`
+    - Parameters:
+        - `userId`: The ID of the user requesting the report.
+        - `customerId`: The ID of the customer for whom the report is generated.
+        - `month`: The month for which the report is generated (1-12).
+        - `year`: The year for which the report is generated (e.g., 2024).
+
+   **Example Request**:
+   ```http
+   POST http://localhost:8080/reports/monthly
+   Content-Type: application/x-www-form-urlencoded
+
+   userId=<user-id>&customerId=<customer-id>&month=12&year=2024
