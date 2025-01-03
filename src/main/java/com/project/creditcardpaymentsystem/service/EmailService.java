@@ -23,4 +23,13 @@ public class EmailService {
             System.err.println("Error sending email: " + e.getMessage());
         }
     }
+
+    // New method to send password reset email
+    public void sendPasswordResetEmail(String to, String token) {
+        String subject = "Password Reset Request";
+        String body = "To reset your password, please click the link below:\n" +
+                "http://yourdomain.com/reset-password?token=" + token + "\n" +
+                "If you did not request a password reset, please ignore this email.";
+        sendTransactionNotification(to, subject, body);
+    }
 }
