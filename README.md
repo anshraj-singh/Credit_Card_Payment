@@ -469,3 +469,47 @@ The Monthly Spending Reports feature allows users to generate a report summarizi
    Content-Type: application/x-www-form-urlencoded
 
    userId=<user-id>&customerId=<customer-id>&month=12&year=2024
+
+
+## Password Reset Functionality Update
+
+### Overview
+
+This update introduces the `PasswordResetController`, which manages the password reset process for users. It enhances security and user experience by allowing users to reset their passwords through a token-based system.
+
+### Features
+
+- **Password Reset Request**: Users can request a password reset by providing their registered username.
+
+- **Token Generation**: A secure token is generated and sent to the user's associated customer's email for verification.
+
+- **Password Update**: Users can update their password using the token, ensuring that only authorized requests are processed.
+
+### Implementation Details
+
+- **Controller**: The `PasswordResetController` handles the logic for sending reset emails and updating passwords.
+
+- **Routes**:
+    - **Request Password Reset**:
+        - **Endpoint**: `/password/reset-request`
+        - **Method**: `POST`
+        - **Parameters**: `username`
+
+    - **Reset Password**:
+        - **Endpoint**: `/password/reset`
+        - **Method**: `POST`
+        - **Parameters**: `token`, `newPassword`
+
+- **Email Service**: Integrated an email service to send password reset links to users.
+
+### Usage
+
+1. **Request Password Reset**: Users can initiate a password reset by accessing the `/password/reset-request` endpoint with their username.
+
+2. **Reset Password**: After receiving the email, users can reset their password by accessing the `/password/reset` endpoint with the token and the new password.
+
+### Example Requests
+
+- **Request Password Reset**:
+  ```bash
+  curl -X POST "http://localhost:8080/password/reset-request?username=newuser"
