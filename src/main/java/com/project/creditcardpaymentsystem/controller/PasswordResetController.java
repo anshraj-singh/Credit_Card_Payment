@@ -8,6 +8,8 @@ import com.project.creditcardpaymentsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,7 +27,11 @@ public class PasswordResetController {
 
     // Request password reset
     @PostMapping("/reset-request")
-    public ResponseEntity<?> requestPasswordReset(@RequestParam String username) {
+    public ResponseEntity<?> requestPasswordReset() {
+        // Get the currently authenticated user's username
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Get the username of the logged-in user
+
         User user = userService.findByUsername(username);
         if (user != null && !user.getCustomers().isEmpty()) {
             // Assuming we want to send the reset link to the first customer's email

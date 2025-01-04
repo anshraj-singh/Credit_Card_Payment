@@ -27,6 +27,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasRole("ADMIN") // Only ROLE_ADMIN can access /admin/*
                 .antMatchers("/reports/**").hasRole("ADMIN") // Only ADMIN can access /reports/*
                 .antMatchers("/Users/me", "/Users/update-user", "/customers/**", "/credit-cards/**", "/transactions/**").authenticated()
+                .antMatchers("/password/**").authenticated() // Ensure password endpoints are secured
                 .anyRequest().permitAll()
                 .and()
                 .httpBasic(); // Use Basic Authentication
