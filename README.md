@@ -513,3 +513,77 @@ This update introduces the `PasswordResetController`, which manages the password
 - **Request Password Reset**:
   ```bash
   curl -X POST "http://localhost:8080/password/reset-request?username=newuser"
+
+
+## Password Reset Functionality Update
+
+### Overview
+
+This update introduces the `PasswordResetController`, which manages the password reset process for users. It enhances security and user experience by allowing users to reset their passwords through a token-based system.
+
+### Features
+
+- **Password Reset Request**: Users can request a password reset by providing their registered username. The reset link will be sent to the email of the first associated customer.
+
+- **Token Generation**: A secure token is generated and sent to the user's associated customer's email for verification.
+
+- **Password Update**: Users can update their password using the token, ensuring that only authorized requests are processed.
+
+### Implementation Details
+
+- **Controller**: The `PasswordResetController` handles the logic for sending reset emails and updating passwords.
+
+- **Routes**:
+    - **Request Password Reset**:
+        - **Endpoint**: `/password/reset-request`
+        - **Method**: `POST`
+        - **Authentication**: Basic Auth (credentials of the logged-in user)
+
+    - **Reset Password**:
+        - **Endpoint**: `/password/reset`
+        - **Method**: `POST`
+        - **Parameters**:
+            - `token`: The password reset token received via email.
+            - `newPassword`: The new password to set.
+
+### Example Requests
+
+- **Request Password Reset**:
+    - **URL**: `http://localhost:8080/password/reset-request`
+    - **Method**: `POST`
+    - **Authorization**: Basic Auth (use the credentials of the logged-in user)
+
+    - **Expected Response**:
+        - Success:
+          ```json
+          {
+            "message": "Password reset link sent to your email."
+          }
+          ```
+        - Failure:
+          ```json
+          {
+            "message": "User  or associated customer not found."
+          }
+          ```
+
+- **Reset Password**:
+    - **URL**: `http://localhost:8080/password/reset`
+    - **Method**: `POST`
+    - **Body** (form-data or x-www-form-urlencoded):
+        - `token`: `YOUR_RESET_TOKEN` (replace with the actual token received in the email)
+        - `newPassword`: `newSecurePassword123` (the new password you want to set)
+
+    - **Expected Response**:
+        - Success:
+          ```json
+          {
+            "message": "Password has been reset successfully."
+          }
+          ```
+        - Failure:
+          ```json
+          {
+            "message": "Invalid or expired token."
+          }
+          ```
