@@ -18,6 +18,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public List<User> findAllUsers() {
@@ -73,6 +76,16 @@ public class UserService {
             user.setResetToken(null); // Clear the token
             user.setResetTokenExpiration(null); // Clear the expiration
             saveNewUser (user);
+
+            // Send email with updated username and new password
+            String subject = "Your Password Has Been Updated";
+            String body = "Hello " + user.getUsername() + ",\n\n" +
+                    "Your password has been successfully updated.\n" +
+                    "Your new password is: " + newPassword + "\n\n" +
+                    "If you did not request this change, please contact support.";
+
+            // Assuming you have access to the email service
+            emailService.sendTransactionNotification(user.getCustomers().get(0).getEmail(), subject, body);
         }
     }
 }
