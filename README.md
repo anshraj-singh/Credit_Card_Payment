@@ -587,3 +587,16 @@ This update introduces the `PasswordResetController`, which manages the password
             "message": "Invalid or expired token."
           }
           ```
+
+### Email Notification
+
+After successfully changing the password, an email is sent to the user with the following details:
+
+- **Subject**: Your Password Has Been Updated
+- **Body**: 
+```
+          Hello [Username],
+
+          Your password has been successfully updated.
+          Your new password is: [NewPassword]
+```
