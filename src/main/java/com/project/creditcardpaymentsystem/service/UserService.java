@@ -1,6 +1,7 @@
 package com.project.creditcardpaymentsystem.service;
 
 import com.project.creditcardpaymentsystem.entity.User;
+import com.project.creditcardpaymentsystem.repository.CustomerRepository;
 import com.project.creditcardpaymentsystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -51,14 +52,25 @@ public class UserService {
 
     // New method to generate password reset token
     public String generatePasswordResetToken(String username) {
+        // Find the user by username
         User user = findByUsername(username);
+        // Check if the user exists
         if (user != null) {
+            // Generate a new token
             String token = UUID.randomUUID().toString();
+            // Set the reset token and expiration time
             user.setResetToken(token);
             user.setResetTokenExpiration(LocalDateTime.now().plusHours(1)); // Token valid for 1 hour
-            saveNewUser (user);
+            // Save the user with the new token and expiration
+            saveNewUser(user);
+            // Log the generated token and expiration for debugging
+            System.out.println("Generated Token: " + token);
+            System.out.println("Token Expiration: " + user.getResetTokenExpiration());
+
+            // Return the generated token
             return token;
         }
+        // Return null if the user is not found
         return null;
     }
 
@@ -73,8 +85,6 @@ public class UserService {
         User user = userRepository.findByResetToken(token);
         if (user != null) {
             user.setPassword(passwordEncoder.encode(newPassword));
-            user.setResetToken(null); // Clear the token
-            user.setResetTokenExpiration(null); // Clear the expiration
             saveNewUser (user);
 
             // Send email with updated username and new password
