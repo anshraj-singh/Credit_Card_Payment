@@ -1,9 +1,11 @@
 package com.project.creditcardpaymentsystem.controller;
 
 import com.project.creditcardpaymentsystem.entity.Customer;
+import com.project.creditcardpaymentsystem.entity.Transaction;
 import com.project.creditcardpaymentsystem.entity.User;
 import com.project.creditcardpaymentsystem.service.CustomerService;
 import com.project.creditcardpaymentsystem.service.EmailService;
+import com.project.creditcardpaymentsystem.service.TransactionService;
 import com.project.creditcardpaymentsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,9 @@ public class CustomerController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @PostMapping
     public ResponseEntity<?> createCustomer(@RequestBody Customer myCustomer) {
@@ -101,5 +106,26 @@ public class CustomerController {
         String userName = authentication.getName();
         customerService.deleteById(myId,userName);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // New endpoint to get all transactions for the authenticated user's customers
+    @GetMapping("/transactions")
+    public ResponseEntity<?> getAllTransactionsForAuthenticatedUser () {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        User user = userService.findByUsername(userName);
+
+        if (user != null) {
+            List<Transaction> transactions = transactionService.findAllTransactions()
+                    .stream()
+                    .filter(transaction -> transaction.getCreditCardId() != null &&
+                            user.getCustomers().stream()
+                                    .flatMap(customer -> customer.getCreditCardIds().stream())
+                                    .anyMatch(id -> id.equals(transaction.getCreditCardId())))
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(transactions, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Unauthorized access", HttpStatus.UNAUTHORIZED);
     }
 }
