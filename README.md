@@ -600,3 +600,60 @@ After successfully changing the password, an email is sent to the user with the 
           Your password has been successfully updated.
           Your new password is: [NewPassword]
 ```
+
+## Payment Reminders Feature
+
+### Overview
+The Payment Reminders feature has been implemented to notify users of upcoming payment due dates for their transactions. This feature helps users avoid late fees and manage their payments effectively.
+
+### Implementation Steps
+
+1. **Scheduled Task**:
+    - Utilizes Spring's scheduling capabilities to check for upcoming payment due dates daily at 9 AM.
+    - The `PaymentReminderService` class is responsible for this task.
+
+2. **Email Notifications**:
+    - Sends automated email reminders to customers using the existing `EmailService`.
+    - Reminders are sent one day before the payment due date, providing users with timely notifications.
+
+### Email Notifications
+
+The following email notifications are sent to customers as part of the Payment Reminders feature:
+
+* **Payment Reminder Email**:
+    - **Subject**: "Payment Reminder"
+    - **Body**:
+      ```
+      Dear [Customer Name],
+  
+      This is a reminder that your payment of [Amount] [Currency] is due tomorrow.
+      Transaction ID: [Transaction ID]
+      Due Date: [Due Date]
+  
+      Please ensure that you make the payment on time to avoid any late fees.
+  
+      Thank you!
+      ```
+
+### Scheduled Email Messages
+
+The following scheduled email messages are sent to customers as part of the Payment Reminders feature:
+
+* **Daily Payment Reminder**:
+    - **Schedule**: Daily at 9 AM
+    - **Message**: Sends a payment reminder email to customers with upcoming payment due dates.
+
+### Example
+When a transaction is created with a due date, the system will automatically send an email reminder to the user the day before the payment is due.
+
+### Email Service Configuration
+
+The `EmailService` is configured to send emails using the following settings:
+
+* **Email Server**: [Email Server URL]
+* **Email Port**: [Email Port Number]
+* **Email Username**: [Email Username]
+* **Email Password**: [Email Password]
+
+### Note
+Please ensure that the email service configuration is updated with the correct settings to send emails successfully.
