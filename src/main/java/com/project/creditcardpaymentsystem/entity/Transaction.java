@@ -18,5 +18,5 @@ public class Transaction {
     private LocalDateTime transactionDate;
     private String description;
     private String status; // PENDING, COMPLETED, FAILED
-
+    private LocalDateTime dueDate; // New field for payment due date
 }

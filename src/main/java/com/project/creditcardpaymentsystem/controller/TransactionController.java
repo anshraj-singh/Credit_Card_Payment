@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +43,10 @@ public class TransactionController {
             CreditCard creditCard = creditCardService.getById(transaction.getCreditCardId()).orElse(null);
             if (creditCard != null) {
                 transaction.setCreditCardId(creditCard.getId());
+
+                // Set the due date for the transaction (e.g., 30 days from now)
+                transaction.setDueDate(LocalDateTime.now().plusDays(30)); // Set due date to 30 days from now
+
                 transactionService.saveTransaction(transaction);
 
                 // Find the customer associated with the credit card
