@@ -3,17 +3,22 @@ package com.project.creditcardpaymentsystem.controller;
 import com.project.creditcardpaymentsystem.entity.CreditCard;
 import com.project.creditcardpaymentsystem.entity.Customer;
 import com.project.creditcardpaymentsystem.entity.Transaction;
+import com.project.creditcardpaymentsystem.entity.User;
 import com.project.creditcardpaymentsystem.service.CreditCardService;
 import com.project.creditcardpaymentsystem.service.CustomerService;
 import com.project.creditcardpaymentsystem.service.TransactionService;
+import com.project.creditcardpaymentsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/transactions")
@@ -27,6 +32,9 @@ public class TransactionController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public ResponseEntity<List<Transaction>> getAllTransactions() {
@@ -92,5 +100,36 @@ public class TransactionController {
     public ResponseEntity<?> deleteTransaction(@PathVariable String myId) {
         transactionService.deleteById(myId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Search transactions by year range and amount
+    @GetMapping("/search")
+    public ResponseEntity<List<Transaction>> searchTransactions(
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+
+        if (user != null) {
+            List<Transaction> allTransactions = transactionService.findAllTransactions();
+            List<Transaction> filteredTransactions = allTransactions.stream()
+                    .filter(transaction -> {
+                        LocalDateTime transactionDate = transaction.getTransactionDate();
+                        LocalDateTime start = LocalDateTime.parse(startDate);
+                        LocalDateTime end = LocalDateTime.parse(endDate);
+                        return (transactionDate.isEqual(start) || transactionDate.isAfter(start)) &&
+                                (transactionDate.isEqual(end) || transactionDate.isBefore(end)) &&
+                                user.getCustomers().stream()
+                                        .flatMap(customer -> customer.getTransactionIds().stream())
+                                        .anyMatch(id -> id.equals(transaction.getId()));
+                    })
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(filteredTransactions, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }
