@@ -17,4 +17,9 @@ public class CreditCard {
     private double spendingLimit; // field for spending limit
     private String cardType; // e.g., Visa, MasterCard
     private String customerId; // Link to Customer
+
+    // New fields for card benefits
+    private double cashbackPercentage; // e.g., 1.5 for 1.5% cashback
+    private double rewardsPoints; // Total rewards points
+    private String discounts; // Description of discounts available
 }

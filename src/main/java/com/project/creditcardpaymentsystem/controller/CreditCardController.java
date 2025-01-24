@@ -139,6 +139,20 @@ public class CreditCardController {
         return new ResponseEntity<>("Unauthorized access", HttpStatus.FORBIDDEN);
     }
 
+    // New endpoint to get card benefits
+    @GetMapping("/benefits/{cardId}")
+    public ResponseEntity<String> getCardBenefits(@PathVariable String cardId) {
+        String username = getAuthenticatedUsername();
+        User user = userService.findByUsername(username);
+
+        if (user != null && isCreditCardOwnedByUser (user, cardId)) {
+            String benefits = creditCardService.getCardBenefits(cardId);
+            return new ResponseEntity<>(benefits, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Unauthorized access or card not found", HttpStatus.FORBIDDEN);
+    }
+
     // Utility method to get authenticated username
     private String getAuthenticatedUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
