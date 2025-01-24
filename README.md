@@ -657,3 +657,30 @@ The `EmailService` is configured to send emails using the following settings:
 
 ### Note
 Please ensure that the email service configuration is updated with the correct settings to send emails successfully.
+
+## Card Benefits Overview Feature
+
+This feature allows users to view the benefits associated with their credit cards, including cashback, rewards points, and discounts.
+
+### Implementation Details
+
+- **Cashback Percentage**: Users can see the percentage of cashback they will receive on eligible purchases.
+- **Rewards Points**: The total number of rewards points accumulated on the card is displayed.
+- **Discounts**: A description of any discounts available to the cardholder is provided.
+
+### API Endpoint
+
+- **GET /credit-cards/benefits/{cardId}**: This endpoint retrieves the benefits associated with a specific credit card.
+
+### Example Response
+
+```json
+{
+    "status": "success",
+    "data": {
+        "cardType": "Master Card",
+        "cashbackPercentage": 1.5,
+        "rewardsPoints": 200,
+        "discounts": "10% off at select retailers"
+    }
+}
