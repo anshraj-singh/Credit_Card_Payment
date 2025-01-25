@@ -684,3 +684,20 @@ This feature allows users to view the benefits associated with their credit card
         "discounts": "10% off at select retailers"
     }
 }
+
+```
+
+## Card Replacement Requests Feature
+
+This feature allows users to request a replacement card if their current card is lost or stolen. 
+
+### Implementation Details
+
+- **Endpoint**: `POST /credit-cards/replace-card`
+- **Request Body**: The request should include the following JSON structure:
+
+```json
+{
+    "cardId": "your_card_id_here",
+    "reason": "Lost" // Reason for requesting a replacement
+}
