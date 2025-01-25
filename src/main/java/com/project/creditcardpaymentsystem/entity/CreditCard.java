@@ -22,4 +22,6 @@ public class CreditCard {
     private double cashbackPercentage; // e.g., 1.5 for 1.5% cashback
     private double rewardsPoints; // Total rewards points
     private String discounts; // Description of discounts available
+
+    private String status; // New field to track card status (e.g., active, lost, replaced)
 }

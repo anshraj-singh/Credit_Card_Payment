@@ -1,5 +1,6 @@
 package com.project.creditcardpaymentsystem.controller;
 
+import com.project.creditcardpaymentsystem.entity.CardReplacementRequest;
 import com.project.creditcardpaymentsystem.entity.CreditCard;
 import com.project.creditcardpaymentsystem.entity.Customer;
 import com.project.creditcardpaymentsystem.entity.User;
@@ -168,5 +169,11 @@ public class CreditCardController {
                     .anyMatch(id -> id.equals(creditCardId));
         }
         return false;
+    }
+
+    @PostMapping("/replace-card")
+    public ResponseEntity<String> requestCardReplacement(@RequestBody CardReplacementRequest request) {
+        String responseMessage = creditCardService.requestCardReplacement(request);
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 }

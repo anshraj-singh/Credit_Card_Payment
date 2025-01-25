@@ -1,6 +1,7 @@
 package com.project.creditcardpaymentsystem.service;
 
 
+import com.project.creditcardpaymentsystem.entity.CardReplacementRequest;
 import com.project.creditcardpaymentsystem.entity.CreditCard;
 import com.project.creditcardpaymentsystem.repository.CreditCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,20 @@ public class CreditCardService {
                     creditCard.getCashbackPercentage(),
                     creditCard.getRewardsPoints(),
                     creditCard.getDiscounts());
+        }
+        return "Credit Card not found.";
+    }
+
+    public String requestCardReplacement(CardReplacementRequest request) {
+        Optional<CreditCard> creditCardOptional = creditCardRepository.findById(request.getCardId());
+        if (creditCardOptional.isPresent()) {
+            CreditCard creditCard = creditCardOptional.get();
+            creditCard.setStatus("REPLACED"); // Update the status of the card
+            creditCardRepository.save(creditCard); // Save the updated card status
+
+            // Here you can add logic to generate a new card number and send it to the user
+            // For simplicity, we will just return a success message
+            return "Replacement card requested successfully. Your current card status is now 'REPLACED'.";
         }
         return "Credit Card not found.";
     }
