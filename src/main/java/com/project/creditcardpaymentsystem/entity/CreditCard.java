@@ -24,4 +24,7 @@ public class CreditCard {
     private String discounts; // Description of discounts available
 
     private String status; // New field to track card status (e.g., active, lost, replaced)
+
+    // New field for credit score
+    private int creditScore; // Credit score for the card
 }

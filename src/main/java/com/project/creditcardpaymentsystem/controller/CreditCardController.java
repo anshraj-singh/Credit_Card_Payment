@@ -5,6 +5,7 @@ import com.project.creditcardpaymentsystem.entity.CreditCard;
 import com.project.creditcardpaymentsystem.entity.Customer;
 import com.project.creditcardpaymentsystem.entity.User;
 import com.project.creditcardpaymentsystem.service.CreditCardService;
+import com.project.creditcardpaymentsystem.service.CreditScoreService;
 import com.project.creditcardpaymentsystem.service.CustomerService;
 import com.project.creditcardpaymentsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,10 @@ public class CreditCardController {
 
     @Autowired
     private UserService userService;
+
+
+    @Autowired
+    private CreditScoreService creditScoreService;
 
     // GET ALL CREDIT CARDS FOR LOGGED-IN USER
     @GetMapping
@@ -175,5 +180,27 @@ public class CreditCardController {
     public ResponseEntity<String> requestCardReplacement(@RequestBody CardReplacementRequest request) {
         String responseMessage = creditCardService.requestCardReplacement(request);
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+    }
+
+    // Endpoint to get credit card score
+    @GetMapping("/score/{cardId}")
+    public ResponseEntity<?> getCreditCardScore(@PathVariable String cardId) {
+        String username = getAuthenticatedUsername();
+        User user = userService.findByUsername(username);
+
+        // Check if the user exists and if they own the credit card
+        if (user != null && isCreditCardOwnedByUser (user, cardId)) {
+            // Retrieve the credit score
+            Optional<Integer> creditScore = creditScoreService.getCreditScore(cardId);
+
+            // Check if the credit score is present
+            if (creditScore.isPresent()) {
+                return new ResponseEntity<>(creditScore.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Credit Card not found", HttpStatus.NOT_FOUND);
+            }
+        }
+
+        return new ResponseEntity<>("Unauthorized access", HttpStatus.FORBIDDEN);
     }
 }
