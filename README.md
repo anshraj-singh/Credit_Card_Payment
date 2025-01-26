@@ -699,5 +699,39 @@ This feature allows users to request a replacement card if their current card is
 ```json
 {
     "cardId": "your_card_id_here",
-    "reason": "Lost" // Reason for requesting a replacement
+    "reason": "Lost" 
 }
+```
+
+# Credit Card Payment System
+
+## Features
+
+This project is a credit card payment system that allows users to manage their credit cards, transactions, and customers.
+
+### New Feature: Credit Card Score
+
+- **Credit Card Score**: Each credit card now has an associated credit score, which can be checked by the user. The score is a numeric value that reflects the creditworthiness of the cardholder.
+
+### API Endpoints
+
+#### Get Credit Card Score
+
+- **Endpoint**: `GET /credit-cards/score/{cardId}`
+- **Description**: Retrieves the credit score for a specific credit card.
+- **Request Parameters**:
+    - `cardId`: The ID of the credit card for which the score is being requested.
+- **Response**:
+    - **200 OK**: Returns the credit score.
+    - **404 Not Found**: If the credit card does not exist.
+    - **403 Forbidden**: If the user does not have permission to access the credit card.
+
+### Example Request
+
+```http
+GET /credit-cards/score/12345
+Example Response
+{
+    "score": 750
+}
+```
