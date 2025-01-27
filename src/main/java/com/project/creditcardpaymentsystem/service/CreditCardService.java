@@ -70,4 +70,16 @@ public class CreditCardService {
         }
         return Optional.empty();
     }
+
+    // New method to automatically update credit score based on transaction amount
+    public void autoUpdateCreditScore(String cardId, double transactionAmount) {
+        Optional<CreditCard> creditCardOptional = creditCardRepository.findById(cardId);
+        if (creditCardOptional.isPresent()) {
+            CreditCard creditCard = creditCardOptional.get();
+            // Example logic: Increase credit score by 1 for every $100 spent
+            int newCreditScore = creditCard.getCreditScore() + (int)(transactionAmount / 100);
+            creditCard.setCreditScore(newCreditScore);
+            creditCardRepository.save(creditCard);
+        }
+    }
 }

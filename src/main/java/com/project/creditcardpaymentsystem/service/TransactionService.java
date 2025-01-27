@@ -55,6 +55,9 @@ public class TransactionService {
                 // Save the transaction
                 transactionRepository.save(transaction); // Save transaction
 
+                // Automatically update the credit score based on the transaction amount
+                creditCardService.autoUpdateCreditScore(transaction.getCreditCardId(), transaction.getAmount());
+
                 // Retrieve the customer associated with the credit card
                 Customer customer = customerService.getById(creditCard.getCustomerId()).orElse(null);
                 if (customer != null) {
