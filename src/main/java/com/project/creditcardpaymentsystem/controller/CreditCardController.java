@@ -203,4 +203,22 @@ public class CreditCardController {
 
         return new ResponseEntity<>("Unauthorized access", HttpStatus.FORBIDDEN);
     }
+
+    // New endpoint to update credit card score
+    @PutMapping("/score/{cardId}")
+    public ResponseEntity<?> updateCreditCardScore(@PathVariable String cardId, @RequestParam int newCreditScore) {
+        String username = getAuthenticatedUsername();
+        User user = userService.findByUsername(username);
+
+        if (user != null && isCreditCardOwnedByUser (user, cardId)) {
+            Optional<CreditCard> updatedCreditCard = creditCardService.updateCreditScore(cardId, newCreditScore);
+            if (updatedCreditCard.isPresent()) {
+                return new ResponseEntity<>(updatedCreditCard.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Credit Card not found", HttpStatus.NOT_FOUND);
+            }
+        }
+
+        return new ResponseEntity<>("Unauthorized access", HttpStatus.FORBIDDEN);
+    }
 }

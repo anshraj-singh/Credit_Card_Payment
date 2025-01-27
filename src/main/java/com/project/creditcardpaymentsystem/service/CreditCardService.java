@@ -59,4 +59,15 @@ public class CreditCardService {
         }
         return "Credit Card not found.";
     }
+
+    public Optional<CreditCard> updateCreditScore(String cardId, int newCreditScore) {
+        Optional<CreditCard> creditCardOptional = creditCardRepository.findById(cardId);
+        if (creditCardOptional.isPresent()) {
+            CreditCard creditCard = creditCardOptional.get();
+            creditCard.setCreditScore(newCreditScore); // Update the credit score
+            creditCardRepository.save(creditCard); // Save the updated credit card
+            return Optional.of(creditCard);
+        }
+        return Optional.empty();
+    }
 }
