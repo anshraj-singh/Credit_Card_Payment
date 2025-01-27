@@ -735,3 +735,28 @@ Example Response
     "score": 750
 }
 ```
+
+## Credit Score Alerts Feature
+
+This feature sends notifications to customers when their credit score changes significantly or falls below a certain threshold.
+
+### Implementation Steps
+
+1. **Threshold Definition**: A threshold for credit score alerts is defined. The current threshold is set at **600**.
+2. **Credit Score Update Method**: A method `updateCreditScore` checks the credit score and updates it. If the score changes significantly (by **50** points or more) or falls below the threshold, an alert is triggered.
+3. **Email Notification**: The `sendCreditScoreAlert` method sends an email notification to the customer, informing them of the change in their credit score.
+
+### Email Notification Format
+
+When a credit score alert is triggered, the email sent to the customer is structured as follows:
+
+```java
+String subject = "Credit Score Alert";
+String body = String.format("Dear Customer,\n\n" +
+        "Your credit score has changed.\n" +
+        "Old Credit Score: %d\n" +
+        "New Credit Score: %d\n\n" +
+        "Please take necessary actions if needed.\n\n" +
+        "Best regards,\n" +
+        "Credit Card Payment System Team", oldCreditScore, newCreditScore);
+```
