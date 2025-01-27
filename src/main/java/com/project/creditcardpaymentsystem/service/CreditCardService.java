@@ -3,6 +3,7 @@ package com.project.creditcardpaymentsystem.service;
 
 import com.project.creditcardpaymentsystem.entity.CardReplacementRequest;
 import com.project.creditcardpaymentsystem.entity.CreditCard;
+import com.project.creditcardpaymentsystem.entity.Customer;
 import com.project.creditcardpaymentsystem.repository.CreditCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,12 @@ public class CreditCardService {
 
     @Autowired
     private CreditCardRepository creditCardRepository;
+
+    @Autowired
+    private EmailService emailService; // Inject EmailService
+
+    @Autowired
+    private  CustomerService customerService;
 
     public List<CreditCard> findAllCreditCards() {
         return creditCardRepository.findAll();
@@ -60,12 +67,23 @@ public class CreditCardService {
         return "Credit Card not found.";
     }
 
+    private static final int CREDIT_SCORE_THRESHOLD = 600; // Define a threshold for alerts
+    private static final int SIGNIFICANT_CHANGE = 50; // Define what constitutes a significant change
+
+
     public Optional<CreditCard> updateCreditScore(String cardId, int newCreditScore) {
         Optional<CreditCard> creditCardOptional = creditCardRepository.findById(cardId);
         if (creditCardOptional.isPresent()) {
             CreditCard creditCard = creditCardOptional.get();
+            int oldCreditScore = creditCard.getCreditScore();
             creditCard.setCreditScore(newCreditScore); // Update the credit score
             creditCardRepository.save(creditCard); // Save the updated credit card
+
+            // Check for significant change or if below threshold
+            if (Math.abs(oldCreditScore - newCreditScore) >= SIGNIFICANT_CHANGE || newCreditScore < CREDIT_SCORE_THRESHOLD) {
+                sendCreditScoreAlert(creditCard, oldCreditScore, newCreditScore);
+            }
+
             return Optional.of(creditCard);
         }
         return Optional.empty();
@@ -81,5 +99,37 @@ public class CreditCardService {
             creditCard.setCreditScore(newCreditScore);
             creditCardRepository.save(creditCard);
         }
+    }
+
+
+    private void sendCreditScoreAlert(CreditCard creditCard, int oldCreditScore, int newCreditScore) {
+        String subject = "Credit Score Alert";
+        String body = String.format("Dear Customer,\n\n" +
+                "Your credit score has changed.\n" +
+                "Old Credit Score: %d\n" +
+                "New Credit Score: %d\n\n" +
+                "Please take necessary actions if needed.\n\n" +
+                "Best regards,\n" +
+                "Credit Card Payment System Team", oldCreditScore, newCreditScore);
+
+        // Assuming you have a method to get the customer's email from the credit card
+        String customerEmail = getCustomerEmailByCardId(creditCard.getId());
+        emailService.sendTransactionNotification(customerEmail, subject, body);
+    }
+
+    private String getCustomerEmailByCardId(String cardId) {
+        // Retrieve the credit card by its ID
+        Optional<CreditCard> creditCardOptional = creditCardRepository.findById(cardId);
+        if (creditCardOptional.isPresent()) {
+            CreditCard creditCard = creditCardOptional.get();
+
+            // Retrieve the customer associated with the credit card
+            Optional<Customer> customerOptional = customerService.getById(creditCard.getCustomerId());
+            if (customerOptional.isPresent()) {
+                Customer customer = customerOptional.get();
+                return customer.getEmail(); // Return the customer's email
+            }
+        }
+        return null; // Return null if no customer is found
     }
 }
