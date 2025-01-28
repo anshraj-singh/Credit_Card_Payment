@@ -132,4 +132,10 @@ public class TransactionController {
 
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
+
+    @GetMapping("/impact/{transactionId}")
+    public ResponseEntity<String> getTransactionImpact(@PathVariable String transactionId) {
+        String impactAnalysis = transactionService.analyzeTransactionImpact(transactionId);
+        return new ResponseEntity<>(impactAnalysis, HttpStatus.OK);
+    }
 }

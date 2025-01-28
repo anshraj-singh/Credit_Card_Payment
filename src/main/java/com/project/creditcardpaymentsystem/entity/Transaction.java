@@ -19,4 +19,5 @@ public class Transaction {
     private String description;
     private String status; // PENDING, COMPLETED, FAILED
     private LocalDateTime dueDate; // New field for payment due date
+    private String type; // New field to indicate transaction type (e.g., "purchase", "payment")
 }

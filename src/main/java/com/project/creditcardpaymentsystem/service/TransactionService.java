@@ -95,4 +95,34 @@ public class TransactionService {
     public void deleteById(String myId) {
         transactionRepository.deleteById(myId);
     }
+
+    public String analyzeTransactionImpact(String transactionId) {
+        Optional<Transaction> transactionOptional = transactionRepository.findById(transactionId);
+        if (transactionOptional.isPresent()) {
+            Transaction transaction = transactionOptional.get();
+            StringBuilder impactAnalysis = new StringBuilder();
+
+            // Analyze the transaction type and amount
+            switch (transaction.getType()) {
+                case "purchase":
+                    impactAnalysis.append("Large purchases can increase your credit utilization ratio, which may negatively impact your credit score if it exceeds 30% of your total credit limit.");
+                    break;
+                case "payment":
+                    impactAnalysis.append("Timely payments can positively impact your credit score. Ensure you make payments on time to maintain a good score.");
+                    break;
+                case "late_payment":
+                    impactAnalysis.append("Late payments can significantly harm your credit score. It's crucial to pay on time to avoid negative impacts.");
+                    break;
+                case "fee":
+                    impactAnalysis.append("Fees do not directly impact your credit score, but they can affect your overall balance and utilization.");
+                    break;
+                default:
+                    impactAnalysis.append("This transaction type does not have a specific impact on your credit score.");
+                    break;
+            }
+
+            return impactAnalysis.toString();
+        }
+        return "Transaction not found.";
+    }
 }
