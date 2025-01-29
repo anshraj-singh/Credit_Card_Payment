@@ -27,4 +27,7 @@ public class CreditCard {
 
     // New field for credit score
     private int creditScore; // Credit score for the card
+
+    // New field to indicate if the card is locked
+    private boolean locked; // true if the card is locked, false otherwise
 }

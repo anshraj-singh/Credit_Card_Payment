@@ -221,4 +221,18 @@ public class CreditCardController {
 
         return new ResponseEntity<>("Unauthorized access", HttpStatus.FORBIDDEN);
     }
+
+    @PutMapping("/lock/{cardId}")
+    public ResponseEntity<CreditCard> lockCreditCard(@PathVariable String cardId) {
+        Optional<CreditCard> lockedCard = creditCardService.lockCreditCard(cardId);
+        return lockedCard.map(card -> new ResponseEntity<>(card, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/unlock/{cardId}")
+    public ResponseEntity<CreditCard> unlockCreditCard(@PathVariable String cardId) {
+        Optional<CreditCard> unlockedCard = creditCardService.unlockCreditCard(cardId);
+        return unlockedCard.map(card -> new ResponseEntity<>(card, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 }

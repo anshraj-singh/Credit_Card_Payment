@@ -132,4 +132,26 @@ public class CreditCardService {
         }
         return null; // Return null if no customer is found
     }
+
+    public Optional<CreditCard> lockCreditCard(String cardId) {
+        Optional<CreditCard> creditCardOptional = creditCardRepository.findById(cardId);
+        if (creditCardOptional.isPresent()) {
+            CreditCard creditCard = creditCardOptional.get();
+            creditCard.setLocked(true); // Lock the card
+            creditCardRepository.save(creditCard); // Save the updated card
+            return Optional.of(creditCard);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<CreditCard> unlockCreditCard(String cardId) {
+        Optional<CreditCard> creditCardOptional = creditCardRepository.findById(cardId);
+        if (creditCardOptional.isPresent()) {
+            CreditCard creditCard = creditCardOptional.get();
+            creditCard.setLocked(false); // Unlock the card
+            creditCardRepository.save(creditCard); // Save the updated card
+            return Optional.of(creditCard);
+        }
+        return Optional.empty();
+    }
 }
