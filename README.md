@@ -760,3 +760,25 @@ String body = String.format("Dear Customer,\n\n" +
         "Best regards,\n" +
         "Credit Card Payment System Team", oldCreditScore, newCreditScore);
 ```
+
+## Credit Card Lock/Unlock Feature
+
+This feature allows users to temporarily lock or unlock their credit card in case of loss or theft.
+
+### Implementation Details
+
+- **Locking a Credit Card**: Users can lock their credit card to prevent any transactions from being processed. This is useful in situations where the card is lost or suspected to be stolen.
+
+- **Unlocking a Credit Card**: Users can unlock their credit card when they find it or if they no longer suspect it to be compromised.
+
+### API Endpoints
+
+- **Lock Credit Card**
+    - **Endpoint**: `PUT /credit-cards/lock/{cardId}`
+    - **Description**: Locks the specified credit card.
+    - **Response**: Returns the locked credit card details or a 404 status if the card is not found.
+
+- **Unlock Credit Card**
+    - **Endpoint**: `PUT /credit-cards/unlock/{cardId}`
+    - **Description**: Unlocks the specified credit card.
+    - **Response**: Returns the unlocked credit card details or a 404 status if the card is not found.
