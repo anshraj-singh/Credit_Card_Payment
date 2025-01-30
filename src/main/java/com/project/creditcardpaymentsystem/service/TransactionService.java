@@ -26,22 +26,46 @@ public class TransactionService {
     @Autowired
     private EmailService emailService;
 
+    // Method to retrieve all transactions
     public List<Transaction> findAllTransactions() {
         return transactionRepository.findAll();
     }
 
+    // Method to save a transaction
     public void saveTransaction(Transaction transaction) {
         transaction.setTransactionDate(LocalDateTime.now()); // Set current date and time
         transaction.setStatus("COMPLETED"); // Set default status
 
-        // Retrieve the credit card associated with the transaction
-        CreditCard creditCard = creditCardService.getById(transaction.getCreditCardId()).orElse(null);
-        if (creditCard != null) {
+        // Check if the credit card is locked
+        Optional<CreditCard> creditCardOptional = creditCardService.getById(transaction.getCreditCardId());
+        if (creditCardOptional.isPresent()) {
+            CreditCard creditCard = creditCardOptional.get();
+
+            // Check if the credit card is locked
+            if (creditCard.isLocked()) {
+                // Send notification about the locked card
+                String userEmail = getUserEmailByCreditCardId(transaction.getCreditCardId());
+                String emailBody = String.format("Dear Customer,\n\n" +
+                                "Your transaction attempt of amount %.2f %s has failed because your credit card is currently locked.\n" +
+                                "Transaction ID: %s\n" +
+                                "Credit Card ID: %s\n" +
+                                "Transaction Date: %s\n" +
+                                "Status: FAILED\n\n" +
+                                "Please unlock your card to proceed with transactions.\n\n" +
+                                "Best regards,\n" +
+                                "Credit Card Payment System Team",
+                        transaction.getAmount(), transaction.getCurrency(),
+                        transaction.getId(), creditCard.getId(), transaction.getTransactionDate());
+
+                emailService.sendTransactionNotification(userEmail, "Transaction Notification - Card Locked", emailBody);
+                throw new RuntimeException("Transaction failed: Credit card is locked.");
+            }
+
             // Check if the transaction amount exceeds the spending limit
             if (transaction.getAmount() <= creditCard.getSpendingLimit()) {
                 // Proceed with the transaction
                 // Deduct the amount from the credit card balance
-                if(creditCard.getBalance() > 0){
+                if (creditCard.getBalance() > 0) {
                     creditCard.setBalance(creditCard.getBalance() - transaction.getAmount()); // Deduct the amount
                 }
                 // Deduct from spending limit
@@ -61,7 +85,7 @@ public class TransactionService {
                 // Retrieve the customer associated with the credit card
                 Customer customer = customerService.getById(creditCard.getCustomerId()).orElse(null);
                 if (customer != null) {
-                    // Send email notification
+                    // Send email notification for successful transaction
                     String emailBody = String.format("Dear %s,\n\n" +
                                     "Your transaction of amount %.2f %s has been successfully processed.\n" +
                                     "Transaction ID: %s\n" +
@@ -88,14 +112,17 @@ public class TransactionService {
         }
     }
 
+    // Method to retrieve a transaction by ID
     public Optional<Transaction> getById(String myId) {
         return transactionRepository.findById(myId);
     }
 
+    // Method to delete a transaction by ID
     public void deleteById(String myId) {
         transactionRepository.deleteById(myId);
     }
 
+    // Method to analyze the impact of a transaction on credit score
     public String analyzeTransactionImpact(String transactionId) {
         Optional<Transaction> transactionOptional = transactionRepository.findById(transactionId);
         if (transactionOptional.isPresent()) {
@@ -124,5 +151,21 @@ public class TransactionService {
             return impactAnalysis.toString();
         }
         return "Transaction not found.";
+    }
+
+    // Method to retrieve a user's email based on the credit card ID
+    private String getUserEmailByCreditCardId(String creditCardId) {
+        // Retrieve the credit card using the credit card ID
+        Optional<CreditCard> creditCardOptional = creditCardService.getById(creditCardId);
+        if (creditCardOptional.isPresent()) {
+            CreditCard creditCard = creditCardOptional.get();
+            // Retrieve the customer associated with the credit card
+            Optional<Customer> customerOptional = customerService.getById(creditCard.getCustomerId());
+            if (customerOptional.isPresent()) {
+                return customerOptional.get().getEmail(); // Return the customer's email
+            }
+            throw new RuntimeException("Customer not found.");
+        }
+        throw new RuntimeException("Credit card not found.");
     }
 }
