@@ -782,3 +782,34 @@ This feature allows users to temporarily lock or unlock their credit card in cas
     - **Endpoint**: `PUT /credit-cards/unlock/{cardId}`
     - **Description**: Unlocks the specified credit card.
     - **Response**: Returns the unlocked credit card details or a 404 status if the card is not found.
+
+## Credit Card Locking and Transaction Notifications
+
+This feature allows users to temporarily lock their credit cards and prevents any transactions from being processed when the card is locked. If a user attempts to make a transaction with a locked credit card, the system will:
+
+1. **Check if the Credit Card is Locked**: Before processing a transaction, the system checks if the associated credit card is locked.
+2. **Send Notification**: If the credit card is locked, an email notification is sent to the user indicating that their transaction attempt has failed due to the card being locked. The notification includes:
+    - The transaction amount
+    - Transaction ID
+    - Credit Card ID
+    - Transaction Date
+    - Status of the transaction (FAILED)
+    - A message prompting the user to unlock their card to proceed with transactions.
+
+### Example Email Notification
+
+When a transaction is attempted with a locked credit card, the user receives an email formatted as follows:
+```
+Dear Customer,
+
+Your transaction attempt of amount [amount] [currency] has failed because your credit card is currently locked. 
+Transaction ID: [transactionId] 
+Credit Card ID: [creditCardId] 
+Transaction Date: [transactionDate] 
+Status: FAILED
+
+Please unlock your card to proceed with transactions.
+
+Best regards, 
+Credit Card Payment System Team
+```
