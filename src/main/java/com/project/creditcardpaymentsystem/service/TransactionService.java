@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TransactionService {
@@ -43,6 +44,9 @@ public class TransactionService {
 
             // Check if the credit card is locked
             if (creditCard.isLocked()) {
+                // Set the transaction ID before sending the notification
+                transaction.setId(UUID.randomUUID().toString()); // Generate a temporary ID for the notification
+
                 // Send notification about the locked card
                 String userEmail = getUserEmailByCreditCardId(transaction.getCreditCardId());
                 String emailBody = String.format("Dear Customer,\n\n" +
