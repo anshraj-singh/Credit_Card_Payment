@@ -813,3 +813,35 @@ Please unlock your card to proceed with transactions.
 Best regards, 
 Credit Card Payment System Team
 ```
+
+## Card Expiration Notifications
+
+This feature sends notifications to users when their credit cards are about to expire. The system checks for credit cards nearing their expiration date and sends an email reminder to the user.
+
+### Implementation Details
+
+- **Scheduled Task**: A scheduled task runs daily to check for credit cards that are set to expire within the next month.
+- **Notification**: If a credit card is found to be expiring soon, an email notification is sent to the user.
+
+### Email Notification Format
+
+When a credit card is nearing expiration, the user receives an email formatted as follows:
+
+```
+Dear [Customer Name],
+
+This is a reminder that your credit card ending in [Last 4 Digits of Card] is set to expire on [Expiration Date]. Please take the necessary steps to renew your card to avoid any interruptions in service.
+
+Best regards, Credit Card Payment System Team
+```
+
+### Example
+
+For example, if a user's credit card is set to expire on January 30, 2025, the email would look like this:
+```
+Dear John Doe,
+
+This is a reminder that your credit card ending in 1234 is set to expire on 2025-01-30. Please take the necessary steps to renew your card to avoid any interruptions in service.
+
+Best regards, Credit Card Payment System Team
+```
