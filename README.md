@@ -845,3 +845,42 @@ This is a reminder that your credit card ending in 1234 is set to expire on 2025
 
 Best regards, Credit Card Payment System Team
 ```
+
+## Features
+
+### Card Replacement
+
+The Card Replacement feature allows users to request a replacement for their credit card in case it is lost, stolen, or damaged.
+
+#### How It Works
+
+1. **Request Submission**: Users can submit a card replacement request by providing the card ID and the reason for the replacement.
+2. **Processing**: The system processes the request, updates the status of the existing card, and saves the replacement request in the database.
+3. **Email Notification**: Upon successful processing of the request, an email confirmation is sent to the user with the details of the new card.
+
+#### Email Format
+
+When a card replacement request is processed, the user receives an email with the following format:
+Subject: Card Replacement Confirmation
+
+```
+Dear [Customer Name],
+
+Your request for a card replacement has been processed successfully. New Card Details: 
+Card Number: **** **** **** [Last 4 Digits] 
+Card Type: [Card Type] Status: REPLACED
+
+If you did not request this change, please contact our support team immediately.
+Best regards, Credit Card Payment System Team
+```
+
+### How to Use
+
+To request a card replacement, send a POST request to the `/card-replacements` endpoint with the following JSON body:
+
+```json
+{
+    "cardId": "your_card_id",
+    "reason": "lost"
+}
+```
