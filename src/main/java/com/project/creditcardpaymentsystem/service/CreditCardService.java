@@ -4,10 +4,12 @@ package com.project.creditcardpaymentsystem.service;
 import com.project.creditcardpaymentsystem.entity.CardReplacementRequest;
 import com.project.creditcardpaymentsystem.entity.CreditCard;
 import com.project.creditcardpaymentsystem.entity.Customer;
+import com.project.creditcardpaymentsystem.repository.CardReplacementRepository;
 import com.project.creditcardpaymentsystem.repository.CreditCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +24,9 @@ public class CreditCardService {
 
     @Autowired
     private  CustomerService customerService;
+
+    @Autowired
+    private CardReplacementRepository cardReplacementRepository;
 
     public List<CreditCard> findAllCreditCards() {
         return creditCardRepository.findAll();
@@ -57,14 +62,50 @@ public class CreditCardService {
         Optional<CreditCard> creditCardOptional = creditCardRepository.findById(request.getCardId());
         if (creditCardOptional.isPresent()) {
             CreditCard creditCard = creditCardOptional.get();
-            creditCard.setStatus("REPLACED"); // Update the status of the card
-            creditCardRepository.save(creditCard); // Save the updated card status
 
-            // Here you can add logic to generate a new card number and send it to the user
-            // For simplicity, we will just return a success message
+            // Create a new CardReplacement entity
+            CardReplacementRequest cardReplacement = new CardReplacementRequest();
+            cardReplacement.setCardId(request.getCardId());
+            cardReplacement.setReason(request.getReason());
+            cardReplacement.setRequestDate(LocalDateTime.now());
+            cardReplacement.setStatus("PENDING"); // Initial status
+
+            // Save the replacement request
+            cardReplacementRepository.save(cardReplacement);
+
+            // Update the credit card status
+            creditCard.setStatus("REPLACED");
+            creditCardRepository.save(creditCard);
+
+            // Send confirmation email
+            sendCardReplacementConfirmationEmail(creditCard);
+
             return "Replacement card requested successfully. Your current card status is now 'REPLACED'.";
         }
         return "Credit Card not found.";
+    }
+
+    private void sendCardReplacementConfirmationEmail(CreditCard creditCard) {
+        Optional<Customer> customerOptional = customerService.getById(creditCard.getCustomerId());
+        if (customerOptional.isPresent()) {
+            Customer customer = customerOptional.get();
+            String subject = "Card Replacement Confirmation";
+            String body = String.format("Dear %s,\n\n" +
+                            "Your request for a card replacement has been processed successfully.\n" +
+                            "New Card Details:\n" +
+                            "Card Number: **** **** **** %s\n" + // Masking the card number
+                            "Card Type: %s\n" +
+                            "Status: %s\n\n" +
+                            "If you did not request this change, please contact our support team immediately.\n\n" +
+                            "Best regards,\n" +
+                            "Credit Card Payment System Team",
+                    customer.getName(),
+                    creditCard.getCardNumber().substring(creditCard.getCardNumber().length() - 4), // Last 4 digits
+                    creditCard.getCardType(),
+                    creditCard.getStatus());
+
+            emailService.sendTransactionNotification(customer.getEmail(), subject, body);
+        }
     }
 
     private static final int CREDIT_SCORE_THRESHOLD = 600; // Define a threshold for alerts
