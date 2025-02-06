@@ -884,3 +884,24 @@ To request a card replacement, send a POST request to the `/card-replacements` e
     "reason": "lost"
 }
 ```
+
+## Stripe Payment Integration
+
+This project now includes integration with Stripe for handling payments. The following features have been implemented:
+
+- **StripeService**: A service class that manages the creation of checkout sessions for products.
+- **ProductRequest**: An entity that encapsulates the details of the product being purchased, including name, amount, quantity, and currency.
+- **StripeResponse**: An entity that encapsulates the response from the Stripe API after creating a checkout session, including session ID and URL.
+- **StripeController**: A controller that exposes an endpoint for initiating the checkout process.
+
+### How to Use
+
+To create a checkout session, send a POST request to `/payments/checkout` with a JSON body containing the product details:
+
+```json
+{
+  "name": "Product Name",
+  "amount": 2000,
+  "quantity": 1,
+  "currency": "usd"
+}
