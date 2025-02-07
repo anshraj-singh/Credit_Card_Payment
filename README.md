@@ -905,3 +905,21 @@ To create a checkout session, send a POST request to `/payments/checkout` with a
   "quantity": 1,
   "currency": "usd"
 }
+```
+
+## Features
+
+### Inactive Credit Card Account Management
+
+This feature automatically closes credit card accounts that have not been used for a specified period of time. If a credit card is inactive for more than 365 days, the card issuer will close the account to maintain security and manage resources effectively.
+
+#### How It Works
+
+1. **Last Used Date Tracking**: Each credit card tracks the last date it was used.
+2. **Scheduled Task**: A scheduled task runs daily at midnight to check all credit cards.
+3. **Account Closure**: If a credit card has not been used for over a year, its status is updated to "CLOSED".
+
+### How to Use
+
+- The system automatically manages inactive accounts, so no user action is required.
+- Users will be notified via email if their account is closed due to inactivity.
