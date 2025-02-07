@@ -7,6 +7,7 @@ import com.project.creditcardpaymentsystem.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -64,6 +65,10 @@ public class TransactionService {
                 emailService.sendTransactionNotification(userEmail, "Transaction Notification - Card Locked", emailBody);
                 throw new RuntimeException("Transaction failed: Credit card is locked.");
             }
+
+            // Update last used date
+            creditCard.setLastUsedDate(LocalDate.now());
+            creditCardService.saveCreditCard(creditCard); // Save updated credit card
 
             // Check if the transaction amount exceeds the spending limit
             if (transaction.getAmount() <= creditCard.getSpendingLimit()) {

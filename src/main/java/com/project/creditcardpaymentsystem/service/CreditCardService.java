@@ -7,9 +7,12 @@ import com.project.creditcardpaymentsystem.entity.Customer;
 import com.project.creditcardpaymentsystem.repository.CardReplacementRepository;
 import com.project.creditcardpaymentsystem.repository.CreditCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -194,5 +197,25 @@ public class CreditCardService {
             return Optional.of(creditCard);
         }
         return Optional.empty();
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?") // Runs every day at midnight
+    public void closeInactiveAccounts() {
+        List<CreditCard> allCreditCards = creditCardRepository.findAll();
+        LocalDate today = LocalDate.now();
+
+        for (CreditCard creditCard : allCreditCards) {
+            if (creditCard.getLastUsedDate() != null) {
+                long daysSinceLastUse = ChronoUnit.DAYS.between(creditCard.getLastUsedDate(), today);
+                if (daysSinceLastUse > 365) { // 1 year
+                    closeAccount(creditCard);
+                }
+            }
+        }
+    }
+
+    private void closeAccount(CreditCard creditCard) {
+        creditCard.setStatus("CLOSED");
+        creditCardRepository.save(creditCard);
     }
 }

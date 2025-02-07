@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
+
 @Document(collection = "credit_cards")
 @Data
 public class CreditCard {
@@ -23,8 +25,8 @@ public class CreditCard {
     private double rewardsPoints; // Total rewards points
     private String discounts; // Description of discounts available
 
-    private String status; // New field to track card status (e.g., active, lost, replaced)
-
+    private LocalDate lastUsedDate; // New field to store the last used date
+    private String status; // New field to track card status (e.g., active, lost, replaced, closed)
     // New field for credit score
     private int creditScore; // Credit score for the card
 
