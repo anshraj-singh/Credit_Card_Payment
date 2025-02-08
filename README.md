@@ -923,3 +923,27 @@ This feature automatically closes credit card accounts that have not been used f
 
 - The system automatically manages inactive accounts, so no user action is required.
 - Users will be notified via email if their account is closed due to inactivity.
+
+## Stripe Payment Integration
+
+This project now includes integration with Stripe for handling payments. The following features have been implemented:
+
+- **StripeService**: A service class that manages the creation of checkout sessions for products and sends email notifications upon successful payment.
+- **ProductRequest**: An entity that encapsulates the details of the product being purchased, including name, amount, quantity, and currency.
+- **StripeResponse**: An entity that encapsulates the response from the Stripe API after creating a checkout session, including session ID and URL.
+- **StripeController**: A controller that exposes an endpoint for initiating the checkout process.
+
+### Email Notification
+
+When a payment is successfully completed, a notification email is sent to the customer with the following format:
+
+```
+Subject: Payment Successful
+Body: Dear Customer,
+      Your payment has been successfully processed. 
+      Session ID: {sessionId} 
+      Amount: {amount} {currency} 
+      Thank you for your purchase!
+
+      Best regards, Your Company Name
+```
