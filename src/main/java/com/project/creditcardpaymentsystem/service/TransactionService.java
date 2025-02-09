@@ -110,6 +110,9 @@ public class TransactionService {
                             creditCard.getBalance()); // Include current balance in the email
 
                     emailService.sendTransactionNotification(customer.getEmail(), "Transaction Notification", emailBody);
+
+                    // Send feedback request email
+                    sendFeedbackRequestEmail(customer);
                 } else {
                     throw new RuntimeException("Customer not found.");
                 }
@@ -176,5 +179,19 @@ public class TransactionService {
             throw new RuntimeException("Customer not found.");
         }
         throw new RuntimeException("Credit card not found.");
+    }
+
+    // New method to send feedback request email
+    private void sendFeedbackRequestEmail(Customer customer) {
+        String subject = "We Value Your Feedback!";
+        String body = String.format("Dear %s,\n\n" +
+                        "Thank you for your recent transaction with us. We would love to hear your feedback on your experience.\n" +
+                        "Please take a moment to fill out our feedback form: [Feedback Form Link]\n\n" +
+                        "Your input helps us improve our services.\n\n" +
+                        "Best regards,\n" +
+                        "Credit Card Payment System Team",
+                customer.getName());
+
+        emailService.sendTransactionNotification(customer.getEmail(), subject, body);
     }
 }
