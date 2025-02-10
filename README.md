@@ -947,3 +947,37 @@ Body: Dear Customer,
 
       Best regards, Your Company Name
 ```
+
+## Card Lock/Unlock Notifications
+
+### Feature Overview
+The Card Lock/Unlock Notifications feature sends email notifications to customers whenever their credit card is locked or unlocked. This feature enhances user experience by keeping customers informed about the status of their credit cards.
+
+### Implementation Details
+- **Class Modified**: `CreditCardService`
+- **Functionality**:
+    - When a card is locked, an email notification is sent to the customer informing them of the action.
+    - When a card is unlocked, a similar notification is sent to confirm the action.
+
+### Email Format
+The email notifications are formatted as follows:
+
+#### Card Lock Notification
+```
+Subject: Your Credit Card Has Been Locked
+Dear [Customer Name],
+Your credit card ending in [Last 4 Digits] has been successfully locked. If you did not 
+request this change, please contact our support team immediately.
+
+Best regards, Credit Card Payment System Team
+```
+
+#### Card Unlock Notification
+```
+Subject: Your Credit Card Has Been Unlocked
+Dear [Customer Name],
+Your credit card ending in [Last 4 Digits] has been successfully unlocked. You can now 
+use your card for transactions.
+
+Best regards, Credit Card Payment System Team
+```
