@@ -183,6 +183,9 @@ public class CreditCardService {
             CreditCard creditCard = creditCardOptional.get();
             creditCard.setLocked(true); // Lock the card
             creditCardRepository.save(creditCard); // Save the updated card
+
+            // Send notification email
+            sendCardLockNotification(creditCard);
             return Optional.of(creditCard);
         }
         return Optional.empty();
@@ -194,6 +197,9 @@ public class CreditCardService {
             CreditCard creditCard = creditCardOptional.get();
             creditCard.setLocked(false); // Unlock the card
             creditCardRepository.save(creditCard); // Save the updated card
+
+            // Send notification email
+            sendCardUnlockNotification(creditCard);
             return Optional.of(creditCard);
         }
         return Optional.empty();
@@ -218,4 +224,40 @@ public class CreditCardService {
         creditCard.setStatus("CLOSED");
         creditCardRepository.save(creditCard);
     }
+
+    // New method to send card lock notification
+    private void sendCardLockNotification(CreditCard creditCard) {
+        Optional<Customer> customerOptional = customerService.getById(creditCard.getCustomerId());
+        if (customerOptional.isPresent()) {
+            Customer customer = customerOptional.get();
+            String subject = "Your Credit Card Has Been Locked";
+            String body = String.format("Dear %s,\n\n" +
+                            "Your credit card ending in %s has been successfully locked.\n" +
+                            "If you did not request this change, please contact our support team immediately.\n\n" +
+                            "Best regards,\n" +
+                            "Credit Card Payment System Team",
+                    customer.getName(),
+                    creditCard.getCardNumber().substring(creditCard.getCardNumber().length() - 4)); // Last 4 digits
+
+            emailService.sendTransactionNotification(customer.getEmail(), subject, body);
+        }
+    }
+
+    private void sendCardUnlockNotification(CreditCard creditCard) {
+        Optional<Customer> customerOptional = customerService.getById(creditCard.getCustomerId());
+        if (customerOptional.isPresent()) {
+            Customer customer = customerOptional.get();
+            String subject = "Your Credit Card Has Been Unlocked";
+            String body = String.format("Dear %s,\n\n" +
+                            "Your credit card ending in %s has been successfully unlocked.\n" +
+                            "You can now use your card for transactions.\n\n" +
+                            "Best regards,\n" +
+                            "Credit Card Payment System Team",
+                    customer.getName(),
+                    creditCard.getCardNumber().substring(creditCard.getCardNumber().length() - 4)); // Last 4 digits
+
+            emailService.sendTransactionNotification(customer.getEmail(), subject, body);
+        }
+    }
+
 }
