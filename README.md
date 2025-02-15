@@ -981,3 +981,27 @@ use your card for transactions.
 
 Best regards, Credit Card Payment System Team
 ```
+
+## Recent Updates
+
+### Card Replacement Management
+- Implemented the `CardReplacementService` to retrieve all card replacement requests.
+- Updated the `AdminController` to include a new endpoint `/admin/card-replacements` for admins to view all card replacement requests.
+
+### Example Response
+```json
+{
+"id": "1",
+"cardId": "1234567890123456",
+"reason": "Lost",
+"requestDate": "2023-10-01T12:00:00",
+"status": "PENDING"
+},
+{
+"id": "2",
+"cardId": "6543210987654321",
+"reason": "Stolen",
+"requestDate": "2023-10-02T15:30:00",
+"status": "COMPLETED"
+}
+```
