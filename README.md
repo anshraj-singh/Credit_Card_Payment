@@ -1005,3 +1005,26 @@ Best regards, Credit Card Payment System Team
 "status": "COMPLETED"
 }
 ```
+
+## AI Integration with Gemini API
+
+### Overview
+As part of enhancing user experience, the Credit Card Payment System now integrates with the Gemini API. This integration allows the application to generate dynamic content and provide intelligent responses to user inquiries regarding credit card management.
+
+### GeminiIntegrationService
+A new service class, `GeminiIntegrationService`, has been created to facilitate communication with the Gemini API. This service utilizes the existing `GeminiService` to generate content based on user prompts.
+
+### Usage
+To utilize the AI features, send a POST request to the `/ai/generate-content` endpoint with a JSON body containing your prompt.
+
+#### Example Request
+```json
+{
+    "prompt": "What are the benefits of using a credit card?"
+}
+```
+```json
+{
+    "response": "Using a credit card can offer several benefits, including rewards points, cash back, and the ability to build credit history."
+}
+```
